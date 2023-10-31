@@ -1,0 +1,9 @@
+version: '0.1'
+services:
+  rest-service:
+    container_name: rest_service
+    image: rest-service
+    restart: always
+    ports:
+      - "9090:9090"
+  
