@@ -18,13 +18,13 @@ func main() {
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 	l := log.New(os.Stdout, "standard-api", log.LstdFlags)
-	conn, err := grpc.Dial("loclahost:9091", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("profile-service:9091", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
 	}
 	defer conn.Close()
-	cc := protos.NewProfileClient(conn)
 
+	cc := protos.NewProfileClient(conn)
 	hh := handlers.NewHello(l, cc)
 	gb := handlers.NewGoodBye(l)
 	sm := http.NewServeMux()
