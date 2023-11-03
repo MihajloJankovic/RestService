@@ -1,12 +1,14 @@
 package main
 
 import (
-	"awesomeProject2/handlers"
 	"context"
+	protos "github.com/MihajloJankovic/profile-service/protos/main"
+	"google.golang.org/grpc"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"servis1/handlers"
 	"syscall"
 	"time"
 )
@@ -14,11 +16,20 @@ import (
 func main() {
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
-
 	l := log.New(os.Stdout, "standard-api", log.LstdFlags)
-	hh := handlers.NewHello(l)
+	conn, err := grpc.Dial("loclahost:9091")
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
+	cc := protos.NewProfileClient(conn)
+
+	hh := handlers.NewHello(l, cc)
 	gb := handlers.NewGoodBye(l)
 	sm := http.NewServeMux()
+
+	// test ee := protos.ProfileRequest{Email: "pera@gmail.com"}
+	// test cc.GetProfile(context.Background(),&ee)
 	sm.Handle("/", hh)
 	sm.Handle("/goodbye", gb)
 	srv := &http.Server{Addr: ":9090", Handler: sm}
