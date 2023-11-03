@@ -4,6 +4,7 @@ import (
 	"context"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net/http"
 	"os"
@@ -17,7 +18,7 @@ func main() {
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 	l := log.New(os.Stdout, "standard-api", log.LstdFlags)
-	conn, err := grpc.Dial("loclahost:9091")
+	conn, err := grpc.Dial("loclahost:9091", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
 	}

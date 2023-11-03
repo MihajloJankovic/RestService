@@ -6,4 +6,10 @@ services:
     restart: always
     ports:
       - "9090:9090"
+  profile-service:
+    container_name: profile-service
+    build: ../profile-service
+    restart: always
+    ports:
+      - "9091:9091"
   

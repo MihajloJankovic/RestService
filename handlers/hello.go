@@ -23,6 +23,7 @@ func (h *Hello) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ee := protos.ProfileRequest{Email: "pera@gmail.com"}
 	response, _ := h.cc.GetProfile(context.Background(), &ee)
 	fmt.Fprintf(w, "Hello %s", response.GetFirstname())
+	fmt.Fprintf(w, "Hello %s", response.String())
 	d, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
