@@ -10,17 +10,17 @@ import (
 	"net/http"
 )
 
-type Hello struct {
+type Porfilehendler struct {
 	l  *log.Logger
 	cc protos.ProfileClient
 }
 
-func NewHello(l *log.Logger, cc protos.ProfileClient) *Hello {
-	return &Hello{l, cc}
+func NewPorfilehendler(l *log.Logger, cc protos.ProfileClient) *Porfilehendler {
+	return &Porfilehendler{l, cc}
 
 }
 
-func (h *Hello) SetProfile(w http.ResponseWriter, r *http.Request) {
+func (h *Porfilehendler) SetProfile(w http.ResponseWriter, r *http.Request) {
 
 	contentType := r.Header.Get("Content-Type")
 	mediatype, _, err := mime.ParseMediaType(contentType)
@@ -44,13 +44,13 @@ func (h *Hello) SetProfile(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 }
-func (h *Hello) GetProfile(w http.ResponseWriter, r *http.Request) {
+func (h *Porfilehendler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	emaila := mux.Vars(r)["email"]
 	ee := new(protos.ProfileRequest)
 	ee.Email = emaila
 	response, err := h.cc.GetProfile(context.Background(), ee)
-	if err != nil {
-		log.Fatalf("RPC failed: %v", err)
+	if err != nil || response == nil {
+		log.Println("RPC failed: %v", err)
 		w.WriteHeader(http.StatusNotAcceptable)
 		w.Write([]byte("Profile not found"))
 		return

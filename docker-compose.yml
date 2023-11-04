@@ -23,9 +23,10 @@ services:
       # which defines the order of starting the containers
       # Additionaly we specify that mongo service needs to pass a healthcheck
     depends_on:
-        mongo:
+      mongo-profile:
           condition: service_healthy
-  mongo:
+  mongo-profile:
+    container_name: mongo-profile
     image: mongo
     restart: always
     ports:
@@ -33,7 +34,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: pass
-      MONGO_INITDB_DATABASE: mongoDemo
+      MONGO_INITDB_DATABASE: mongoProfile
     # Docker healtcheck - checks if database is "alive"
     healthcheck:
       test: echo 'db.runCommand("ping").ok'
@@ -55,7 +56,7 @@ services:
         - ME_CONFIG_BASICAUTH_USERNAME=admin
         - ME_CONFIG_BASICAUTH_PASSWORD=admin
       depends_on:
-        - mongo
+        - mongo-profile
       ports:
         - "8081:8081"
       volumes:

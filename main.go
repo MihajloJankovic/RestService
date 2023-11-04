@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/MihajloJankovic/RestService/handlers"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
@@ -10,7 +11,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"github.com/MihajloJankovic/RestService/handlers"
 	"syscall"
 	"time"
 )
@@ -26,8 +26,7 @@ func main() {
 	defer conn.Close()
 
 	cc := protos.NewProfileClient(conn)
-	hh := handlers.NewHello(l, cc)
-	//gb := handlers.NewGoodBye(l)
+	hh := handlers.NewPorfilehendler(l, cc)
 	router := mux.NewRouter()
 	router.StrictSlash(true)
 
