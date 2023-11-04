@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
+	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
@@ -26,14 +27,16 @@ func main() {
 
 	cc := protos.NewProfileClient(conn)
 	hh := handlers.NewHello(l, cc)
-	gb := handlers.NewGoodBye(l)
-	sm := http.NewServeMux()
+	//gb := handlers.NewGoodBye(l)
+	router := mux.NewRouter()
+	router.StrictSlash(true)
 
+	router.HandleFunc("/{email}", hh.GetProfile).Methods("GET")
+	router.HandleFunc("/addprofile", hh.SetProfile).Methods("POST")
 	// test ee := protos.ProfileRequest{Email: "pera@gmail.com"}
 	// test cc.GetProfile(context.Background(),&ee)
-	sm.Handle("/", hh)
-	sm.Handle("/goodbye", gb)
-	srv := &http.Server{Addr: ":9090", Handler: sm}
+
+	srv := &http.Server{Addr: ":9090", Handler: router}
 	go func() {
 		log.Println("server starting")
 		if err := srv.ListenAndServe(); err != nil {
