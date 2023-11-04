@@ -16,7 +16,7 @@ services:
       - PORT=8080
       # NoSQL: environment variable holding connection URI for Mongo database
       # protocol://username:password@hostname:port
-      - MONGO_DB_URI=mongodb://root:pass@mongo:27017
+      - MONGO_DB_URI=mongodb://root:pass@mongo-profile:27017
       # - MONGO_DB_URI=mongodb://mongo:27017
       # NoSQL: Our service will try to connect to Mongo before it is up
       # in order to avoid that problem, we specify that it depends on mongo service
@@ -42,7 +42,7 @@ services:
       timeout: 10s
       retries: 10
     volumes:
-      - mongo_store:/data/db
+      - mongo_profiles:/data/db
 
     # NoSQL: MognoExpress
   mongo-express:
@@ -63,5 +63,5 @@ services:
         - mong_express_data:/data/db
 
 volumes:
-  mongo_store:
+  mongo_profiles:
   mong_express_data:  
