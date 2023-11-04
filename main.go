@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"servis1/handlers"
+	"github.com/MihajloJankovic/RestService/handlers"
 	"syscall"
 	"time"
 )

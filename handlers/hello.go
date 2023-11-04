@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	helper "github.com/MihajloJankovic/RestService"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
+	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"mime"
@@ -20,7 +20,6 @@ type Hello struct {
 func NewHello(l *log.Logger, cc protos.ProfileClient) *Hello {
 	return &Hello{l, cc}
 
-	aa.Register
 }
 
 func (h *Hello) SetProfile(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +36,7 @@ func (h *Hello) SetProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rt, err := helper.DecodeBody(r.Body)
+	rt, err := DecodeBody(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusAccepted)
 		return
@@ -61,9 +60,9 @@ func (h *Hello) SetProfile(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello %s", d)
 }
 func (h *Hello) GetProfile(w http.ResponseWriter, r *http.Request) {
-	h.l.Println("hello world")
+	emaila := mux.Vars(r)["email"]
 	ee := new(protos.ProfileRequest)
-	ee.Email = "pera@gmail.com"
+	ee.Email = emaila
 	response, err := h.cc.GetProfile(context.Background(), ee)
 	if err != nil {
 		log.Fatalf("RPC failed: %v", err)
