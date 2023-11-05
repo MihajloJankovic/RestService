@@ -30,8 +30,9 @@ func main() {
 	router := mux.NewRouter()
 	router.StrictSlash(true)
 
-	router.HandleFunc("/{email}", hh.GetProfile).Methods("GET")
+	router.HandleFunc("/profile/{email}", hh.GetProfile).Methods("GET")
 	router.HandleFunc("/addprofile", hh.SetProfile).Methods("POST")
+	router.HandleFunc("/update-profile", hh.UpdateProfile).Methods("POST")
 	// test ee := protos.ProfileRequest{Email: "pera@gmail.com"}
 	// test cc.GetProfile(context.Background(),&ee)
 
