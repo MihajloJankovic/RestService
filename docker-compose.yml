@@ -99,8 +99,30 @@ services:
       retries: 10
     volumes:
       - mongo_accommodations:/data/db
+  auth-service:
+    container_name: auth-service
+    build: ../auth-service
+    restart: always
+    ports:
+      - "8082:8082"
+    depends_on:
+      - consul
+    environment: 
+      - DB=consul
+      - DBPORT=8500
+
+  consul:
+    image: consul:1.15
+    ports:
+      - "8500:8500"
+      - "8600:8600/tcp"
+      - "8600:8600/udp"
+    command: "agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0"
+    volumes:
+      - /home/borisavz/consul:/consul/data
 
 volumes:
   mongo_profiles:
   mong_express_data:
   mongo_accommodations:
+  consul:
