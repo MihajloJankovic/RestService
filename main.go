@@ -2,14 +2,16 @@ package main
 
 import (
 	"context"
+	"github.com/MihajloJankovic/RestService/handlers"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
+	//protosAcc "github.com/MihajloJankovic/accommodation-service/protos/main"
+	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"servis1/handlers"
 	"syscall"
 	"time"
 )
@@ -23,17 +25,18 @@ func main() {
 		panic(err)
 	}
 	defer conn.Close()
-
 	cc := protos.NewProfileClient(conn)
-	hh := handlers.NewHello(l, cc)
-	gb := handlers.NewGoodBye(l)
-	sm := http.NewServeMux()
+	hh := handlers.NewPorfilehendler(l, cc)
+	router := mux.NewRouter()
+	router.StrictSlash(true)
 
+	router.HandleFunc("/profile/{email}", hh.GetProfile).Methods("GET")
+	router.HandleFunc("/addprofile", hh.SetProfile).Methods("POST")
+	router.HandleFunc("/update-profile", hh.UpdateProfile).Methods("POST")
 	// test ee := protos.ProfileRequest{Email: "pera@gmail.com"}
 	// test cc.GetProfile(context.Background(),&ee)
-	sm.Handle("/", hh)
-	sm.Handle("/goodbye", gb)
-	srv := &http.Server{Addr: ":9090", Handler: sm}
+
+	srv := &http.Server{Addr: ":9090", Handler: router}
 	go func() {
 		log.Println("server starting")
 		if err := srv.ListenAndServe(); err != nil {

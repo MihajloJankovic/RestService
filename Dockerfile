@@ -34,6 +34,7 @@ COPY --from=builder /app/main .
 
 EXPOSE 9090
 EXPOSE 9091
+EXPOSE 9093
 
 # Command to run the executable
 CMD ["./main"]

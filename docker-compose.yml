@@ -12,4 +12,95 @@ services:
     restart: always
     ports:
       - "9091:9091"
-  
+    environment:
+      - PORT=8080
+      # NoSQL: environment variable holding connection URI for Mongo database
+      # protocol://username:password@hostname:port
+      - MONGO_DB_URI=mongodb://root:pass@mongo-profile:27017
+      # - MONGO_DB_URI=mongodb://mongo:27017
+      # NoSQL: Our service will try to connect to Mongo before it is up
+      # in order to avoid that problem, we specify that it depends on mongo service
+      # which defines the order of starting the containers
+      # Additionaly we specify that mongo service needs to pass a healthcheck
+    depends_on:
+      mongo-profile:
+          condition: service_healthy
+  mongo-profile:
+    container_name: mongo-profile
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pass
+      MONGO_INITDB_DATABASE: mongoProfile
+    # Docker healtcheck - checks if database is "alive"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok'
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    volumes:
+      - mongo_profiles:/data/db
+
+    # NoSQL: MognoExpress
+  mongo-express:
+      image: mongo-express
+      restart: always
+      environment:
+        # hostname of mongo databse
+        - ME_CONFIG_MONGODB_SERVER=mongo-profile
+        - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+        - ME_CONFIG_MONGODB_ADMINPASSWORD=pass
+        - ME_CONFIG_BASICAUTH_USERNAME=admin
+        - ME_CONFIG_BASICAUTH_PASSWORD=admin
+      depends_on:
+        - mongo-profile
+      ports:
+        - "8081:8081"
+      volumes:
+        - mong_express_data:/data/db
+
+  accommodation-service:
+    container_name: accommodation-service
+    build: ../accommodation-service
+    restart: always
+    ports:
+      - "9093:9093"
+    environment:
+      - PORT=8080
+      # NoSQL: environment variable holding connection URI for Mongo database
+      # protocol://username:password@hostname:port
+      - MONGO_DB_URI=mongodb://root:pass@mongo-accommodation:27018
+      # - MONGO_DB_URI=mongodb://mongo:27018
+      # NoSQL: Our service will try to connect to Mongo before it is up
+      # in order to avoid that problem, we specify that it depends on mongo service
+      # which defines the order of starting the containers
+      # Additionaly we specify that mongo service needs to pass a healthcheck
+    depends_on:
+      mongo-accommodation:
+          condition: service_healthy
+  mongo-accommodation:
+    container_name: mongo-accommodation
+    image: mongo
+    restart: always
+    ports:
+      - "27018:27018"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pass
+      MONGO_INITDB_DATABASE: mongoAccommodation
+    # Docker healtcheck - checks if database is "alive"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok'
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    volumes:
+      - mongo_accommodations:/data/db
+
+volumes:
+  mongo_profiles:
+  mong_express_data:
+  mongo_accommodations:
