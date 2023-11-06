@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/MihajloJankovic/RestService/handlers"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
+	//protosAcc "github.com/MihajloJankovic/accommodation-service/protos/main"
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -24,7 +25,6 @@ func main() {
 		panic(err)
 	}
 	defer conn.Close()
-
 	cc := protos.NewProfileClient(conn)
 	hh := handlers.NewPorfilehendler(l, cc)
 	router := mux.NewRouter()
