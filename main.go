@@ -31,13 +31,13 @@ func main() {
 	defer conn.Close()
 	cc := protos.NewProfileClient(conn)
 	hh := handlers.NewPorfilehendler(l, cc)
-	conn, err := grpc.Dial("auth-service:8082", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	connAuth, err := grpc.Dial("auth-service:9094", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
 	}
 	defer conn.Close()
-	ccAuth := protosAuth.NewProfileClient(con)
-	hhAuth := handlers.NewPorfilehendler(1, ccAuth)
+	ccAuth := protosAuth.NewAuthClient(connAuth)
+	hhAuth := handlers.NewAuthHandler(l, ccAuth)
 	router := mux.NewRouter()
 	router.StrictSlash(true)
 
@@ -46,8 +46,9 @@ func main() {
 	router.HandleFunc("/update-profile", hh.UpdateProfile).Methods("POST")
 	// test ee := protos.ProfileRequest{Email: "pera@gmail.com"}
 	// test cc.GetProfile(context.Background(),&ee)
-	router.HandleFunc("/register", hhAuth.RegisterUser).Methods("POST")
-	router.HandleFunc("/login", hhAuth.LoginUser).Methods("POST")
+	router.HandleFunc("/register", hhAuth.Register).Methods("POST")
+	router.HandleFunc("/login", hhAuth.Login).Methods("POST")
+	router.HandleFunc("/getAuth", hhAuth.GetAuth).Methods("GET")
 	srv := &http.Server{Addr: ":9090", Handler: router}
 	go func() {
 		log.Println("server starting")
