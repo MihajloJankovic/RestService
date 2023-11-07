@@ -61,22 +61,7 @@ services:
         - "8081:8081"
       volumes:
         - mong_express_data:/data/db
-  mongo-expressaco:
-    image: mongo-express
-    restart: always
-    environment:
-      # hostname of mongo databse
-      - ME_CONFIG_MONGODB_SERVER=mongo-accommodation
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=pass
-      - ME_CONFIG_BASICAUTH_USERNAME=admin
-      - ME_CONFIG_BASICAUTH_PASSWORD=admin
-    depends_on:
-      - mongo-accommodation
-    ports:
-      - "8082:8082"
-    volumes:
-      - mong_expressa_data:/data/db
+
   accommodation-service:
     container_name: accommodation-service
     build: ../accommodation-service
@@ -87,7 +72,7 @@ services:
       - PORT=8080
       # NoSQL: environment variable holding connection URI for Mongo database
       # protocol://username:password@hostname:port
-      - MONGO_DB_URI=mongodb://root:pass@mongo-accommodation:27018
+      - MONGO_DB_URI=mongodb://root:pass@mongo-accommodation:27017
       # - MONGO_DB_URI=mongodb://mongo:27018
       # NoSQL: Our service will try to connect to Mongo before it is up
       # in order to avoid that problem, we specify that it depends on mongo service
@@ -101,7 +86,7 @@ services:
     image: mongo
     restart: always
     ports:
-      - "27018:27018"
+      - "27018:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: pass
@@ -118,5 +103,4 @@ services:
 volumes:
   mongo_profiles:
   mong_express_data:
-  mong_expressa_data:
   mongo_accommodations:
