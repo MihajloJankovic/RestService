@@ -10,6 +10,7 @@ require (
 
 require (
 	github.com/MihajloJankovic/accommodation-service v0.0.0-20231105191749-875f905aba67 // indirect
+	github.com/golang-jwt/jwt/v5 v5.0.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	golang.org/x/net v0.14.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect

@@ -3,11 +3,14 @@ package handlers
 import (
 	"context"
 	"errors"
+	"fmt"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/mux"
 	"log"
 	"mime"
 	"net/http"
+	"time"
 )
 
 type Porfilehendler struct {
@@ -45,6 +48,7 @@ func (h *Porfilehendler) SetProfile(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 func (h *Porfilehendler) GetProfile(w http.ResponseWriter, r *http.Request) {
+
 	emaila := mux.Vars(r)["email"]
 	ee := new(protos.ProfileRequest)
 	ee.Email = emaila
