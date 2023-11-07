@@ -32,7 +32,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
 		return
 	}
-	rt, err := DecodeBody(r.Body)
+	rt, err := DecodeBodyAuth(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusAccepted)
 		return
@@ -60,7 +60,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
 		return
 	}
-	rt, err := DecodeBody(r.Body)
+	rt, err := DecodeBodyAuth(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusAccepted)
 		return
@@ -76,9 +76,11 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	RenderJSON(w, response)
 }
 
-func (h *Porfilehendler) GetAuth(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) GetAuth(w http.ResponseWriter, r *http.Request) {
 	// Your logic to fetch authentication data
-	auths, err := h.cc.GetAuth(context.Background(), &protos.AuthRequest{})
+	req := new(protosAuth.AuthGet)
+	//req.Username =
+	auths, err := h.cc.GetAuth(context.Background(), req)
 	if err != nil {
 		log.Println("Failed to get authentication data:", err)
 		w.WriteHeader(http.StatusInternalServerError)

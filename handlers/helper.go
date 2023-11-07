@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	"io"
 	"net/http"
@@ -23,7 +24,16 @@ func DecodeBody(r io.Reader) (*protos.ProfileResponse, error) {
 	}
 	return &rt, nil
 }
+func DecodeBodyAuth(r io.Reader) (*protosAuth.AuthRequest, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
 
+	var rt protosAuth.AuthRequest
+	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
 func RenderJSON(w http.ResponseWriter, v interface{}) {
 	js, err := json.Marshal(v)
 	if err != nil {

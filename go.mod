@@ -5,7 +5,7 @@ go 1.21.1
 toolchain go1.21.3
 
 require (
-	github.com/MihajloJankovic/Auth-Service v0.0.0-20231107070707-57e25e908ea6
+	github.com/MihajloJankovic/Auth-Service v0.0.0-20231107073532-529b0b22e6f9
 	github.com/MihajloJankovic/profile-service v0.0.0-20231105091835-9f7b9d1a56e2
 	github.com/gorilla/mux v1.8.0
 	google.golang.org/grpc v1.59.0
