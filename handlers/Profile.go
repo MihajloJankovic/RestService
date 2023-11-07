@@ -3,14 +3,11 @@ package handlers
 import (
 	"context"
 	"errors"
-	"fmt"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/mux"
 	"log"
 	"mime"
 	"net/http"
-	"time"
 )
 
 type Porfilehendler struct {

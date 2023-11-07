@@ -3,7 +3,7 @@ module github.com/MihajloJankovic/RestService
 go 1.21.1
 
 require (
-	github.com/MihajloJankovic/accommodation-service v0.0.0-20231107155027-bebcdb2abc9b
+	github.com/MihajloJankovic/accommodation-service v0.0.0-20231107163409-760be57b1052
 	github.com/MihajloJankovic/profile-service v0.0.0-20231106085704-c0b151094487
 	github.com/gorilla/mux v1.8.1
 	google.golang.org/grpc v1.59.0

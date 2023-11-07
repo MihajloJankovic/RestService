@@ -3,7 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
-	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/main"
+	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/glavno"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	"io"
 	"net/http"
