@@ -45,7 +45,7 @@ services:
       - mongo_profiles:/data/db
 
     # NoSQL: MognoExpress
-  mongo-express:
+  mongo-expresspro:
       image: mongo-express
       restart: always
       environment:
@@ -61,7 +61,7 @@ services:
         - "8081:8081"
       volumes:
         - mong_express_data:/data/db
-  mongo-express-a:
+  mongo-expressaco:
     image: mongo-express
     restart: always
     environment:
@@ -72,9 +72,9 @@ services:
       - ME_CONFIG_BASICAUTH_USERNAME=admin
       - ME_CONFIG_BASICAUTH_PASSWORD=admin
     depends_on:
-      - accommodation-service
+      - mongo-accommodation
     ports:
-      - "8081:8081"
+      - "8082:8082"
     volumes:
       - mong_expressa_data:/data/db
   accommodation-service:
@@ -118,5 +118,5 @@ services:
 volumes:
   mongo_profiles:
   mong_express_data:
-    mong_expressa_data:
+  mong_expressa_data:
   mongo_accommodations:
