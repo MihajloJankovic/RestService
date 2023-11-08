@@ -45,7 +45,7 @@ services:
       - mongo_profiles:/data/db
 
     # NoSQL: MognoExpress
-  mongo-express:
+  mongo-expresspro:
       image: mongo-express
       restart: always
       environment:
@@ -136,9 +136,10 @@ services:
       timeout: 10s
       retries: 10
     volumes:
-      - mongo_accommodations:/data/db
+      - mongo_auths:/data/db
       
 volumes:
   mongo_profiles:
   mong_express_data:
   mongo_accommodations:
+  mongo_auths:
