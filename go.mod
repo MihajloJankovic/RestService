@@ -5,26 +5,15 @@ go 1.21.1
 toolchain go1.21.3
 
 require (
-	github.com/MihajloJankovic/Auth-Service v0.0.0-20231107073532-529b0b22e6f9
-	github.com/MihajloJankovic/profile-service v0.0.0-20231105091835-9f7b9d1a56e2
-	github.com/gorilla/mux v1.8.0
+	github.com/MihajloJankovic/Auth-Service v0.0.0-20231108171815-89f21a1d8b09
+	github.com/MihajloJankovic/profile-service v0.0.0-20231108074029-a6f37a7f3eda
+	github.com/gorilla/mux v1.8.1
 	google.golang.org/grpc v1.59.0
 )
 
 require (
-	github.com/MihajloJankovic/accommodation-service v0.0.0-20231105191749-875f905aba67 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/golang/snappy v0.0.1 // indirect
-	github.com/klauspost/compress v1.13.6 // indirect
-	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
-	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
-	github.com/xdg-go/scram v1.1.2 // indirect
-	github.com/xdg-go/stringprep v1.0.4 // indirect
-	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
-	go.mongodb.org/mongo-driver v1.12.1 // indirect
-	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
-	golang.org/x/sync v0.3.0 // indirect
 	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d // indirect

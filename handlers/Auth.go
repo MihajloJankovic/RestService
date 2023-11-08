@@ -79,7 +79,6 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) GetAuth(w http.ResponseWriter, r *http.Request) {
 	// Your logic to fetch authentication data
 	req := new(protosAuth.AuthGet)
-	log.Println("req: " + req)
 	//req.Username =
 	auths, err := h.cc.GetAuth(context.Background(), req)
 	if err != nil {
