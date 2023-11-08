@@ -34,6 +34,7 @@ func (h *Porfilehendler) SetProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rt, err := DecodeBody(r.Body)
+	rt.Role = "Guest"
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusAccepted)
 		return
