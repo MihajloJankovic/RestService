@@ -38,7 +38,7 @@ func main() {
 	cc := protos.NewProfileClient(conn)
 	acc := protosAcc.NewAccommodationClient(connAcc)
 	hh := handlers.NewPorfilehendler(l, cc)
-	acch := handlers.NewAccommodationHandler(l, acc)
+	acch := handlers.NewAccommodationHandler(l, acc, hh)
 
 	connAuth, err := grpc.Dial("auth-service:9094", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -47,13 +47,12 @@ func main() {
 	defer conn.Close()
 
 	ccAuth := protosAuth.NewAuthClient(connAuth)
-	hhAuth := handlers.NewAuthHandler(l, ccAuth)
+	hhAuth := handlers.NewAuthHandler(l, ccAuth, hh)
 
 	router := mux.NewRouter()
 	router.StrictSlash(true)
 
 	router.HandleFunc("/profile/{email}", hh.GetProfile).Methods("GET")
-	router.HandleFunc("/add-profile", hh.SetProfile).Methods("POST")
 	router.HandleFunc("/update-profile", hh.UpdateProfile).Methods("POST")
 	router.HandleFunc("/accommodation/{email}", acch.GetAccommodation).Methods("GET")
 	router.HandleFunc("/add-accommodation", acch.SetAccommodation).Methods("POST")

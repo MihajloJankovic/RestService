@@ -13,10 +13,11 @@ import (
 type AccommodationHandler struct {
 	l   *log.Logger
 	acc protosAcc.AccommodationClient
+	hh  *Porfilehendler
 }
 
-func NewAccommodationHandler(l *log.Logger, acc protosAcc.AccommodationClient) *AccommodationHandler {
-	return &AccommodationHandler{l, acc}
+func NewAccommodationHandler(l *log.Logger, acc protosAcc.AccommodationClient, hb *Porfilehendler) *AccommodationHandler {
+	return &AccommodationHandler{l, acc, hb}
 
 }
 
@@ -38,6 +39,18 @@ func (h *AccommodationHandler) SetAccommodation(w http.ResponseWriter, r *http.R
 		http.Error(w, err.Error(), http.StatusAccepted)
 		return
 	}
+	res := ValidateJwt(r, h.hh)
+	if res == nil {
+		err := errors.New("jwt error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	re := *res
+	if re.GetEmail() != rt.GetEmail() {
+		err := errors.New("authorization error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
 	_, err = h.acc.SetAccommodation(context.Background(), rt)
 	if err != nil {
 		log.Println("RPC failed: %v", err)
@@ -48,6 +61,18 @@ func (h *AccommodationHandler) GetAccommodation(w http.ResponseWriter, r *http.R
 	emaila := mux.Vars(r)["email"]
 	ee := new(protosAcc.AccommodationRequest)
 	ee.Email = emaila
+	res := ValidateJwt(r, h.hh)
+	if res == nil {
+		err := errors.New("jwt error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	re := *res
+	if re.GetEmail() != ee.GetEmail() {
+		err := errors.New("authorization error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
 	response, err := h.acc.GetAccommodation(context.Background(), ee)
 	if err != nil || response == nil {
 		log.Println("RPC failed: %v", err)
@@ -56,7 +81,7 @@ func (h *AccommodationHandler) GetAccommodation(w http.ResponseWriter, r *http.R
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	RenderJSON(w, response)
+	RenderJSON(w, response.Dummy)
 }
 func (h *AccommodationHandler) UpdateAccommodation(w http.ResponseWriter, r *http.Request) {
 
@@ -73,7 +98,19 @@ func (h *AccommodationHandler) UpdateAccommodation(w http.ResponseWriter, r *htt
 	}
 	rt, err := DecodeBodyAcc(r.Body)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusAccepted)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	res := ValidateJwt(r, h.hh)
+	if res == nil {
+		err := errors.New("jwt error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	re := *res
+	if re.GetEmail() != rt.GetEmail() {
+		err := errors.New("authorization error")
+		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
 	_, err = h.acc.UpdateAccommodation(context.Background(), rt)

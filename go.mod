@@ -6,8 +6,9 @@ toolchain go1.21.3
 
 require (
 	github.com/MihajloJankovic/Auth-Service v0.0.0-20231108171815-89f21a1d8b09
-	github.com/MihajloJankovic/accommodation-service v0.0.0-20231107184900-68ba4da6fb7c
+	github.com/MihajloJankovic/accommodation-service v0.0.0-20231109124912-e2618976b7af
 	github.com/MihajloJankovic/profile-service v0.0.0-20231108074029-a6f37a7f3eda
+	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/gorilla/mux v1.8.1
 	google.golang.org/grpc v1.59.0
 )
