@@ -3,11 +3,12 @@ package handlers
 import (
 	"context"
 	"errors"
-	protos "github.com/MihajloJankovic/profile-service/protos/main"
-	"github.com/gorilla/mux"
 	"log"
 	"mime"
 	"net/http"
+
+	protos "github.com/MihajloJankovic/profile-service/protos/main"
+	"github.com/gorilla/mux"
 )
 
 type Porfilehendler struct {

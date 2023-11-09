@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
 	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/glavno"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	"io"
@@ -14,6 +15,7 @@ func StreamToByte(stream io.Reader) []byte {
 	buf.ReadFrom(stream)
 	return buf.Bytes()
 }
+
 func DecodeBody(r io.Reader) (*protos.ProfileResponse, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
@@ -24,12 +26,22 @@ func DecodeBody(r io.Reader) (*protos.ProfileResponse, error) {
 	}
 	return &rt, nil
 }
-
 func DecodeBodyAcc(r io.Reader) (*protosAcc.AccommodationResponse, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
 
 	var rt protosAcc.AccommodationResponse
+	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
+
+func DecodeBodyAuth(r io.Reader) (*protosAuth.AuthRequest, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosAuth.AuthRequest
 	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
 		return nil, err
 	}
