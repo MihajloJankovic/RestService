@@ -16,7 +16,10 @@ import (
 
 func StreamToByte(stream io.Reader) []byte {
 	buf := new(bytes.Buffer)
-	buf.ReadFrom(stream)
+	_, err := buf.ReadFrom(stream)
+	if err != nil {
+		return nil
+	}
 	return buf.Bytes()
 }
 func GenerateJwt(w http.ResponseWriter, email string) {
@@ -86,6 +89,7 @@ func DecodeBodyAuth2(r io.Reader) (*protosAuth.AuthGet, error) {
 	}
 	return &rt, nil
 }
+
 func DecodeBodyAuthLog(r io.Reader) (*protosAuth.AuthRequest, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
@@ -96,7 +100,6 @@ func DecodeBodyAuthLog(r io.Reader) (*protosAuth.AuthRequest, error) {
 	}
 	return &rt, nil
 }
-
 func ToJSON(response *protos.ProfileResponse) (string, error) {
 	jsonData, err := json.Marshal(response)
 	if err != nil {
@@ -113,7 +116,10 @@ func RenderJSON(w http.ResponseWriter, v interface{}) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
+	_, err = w.Write(js)
+	if err != nil {
+		return
+	}
 }
 func ValidateJwt(r *http.Request, h *Porfilehendler) *protos.ProfileResponse {
 	tokenString := r.Header.Get("jwt")
@@ -123,7 +129,7 @@ func ValidateJwt(r *http.Request, h *Porfilehendler) *protos.ProfileResponse {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
 		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")

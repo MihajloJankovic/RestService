@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 
 	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
 	"github.com/MihajloJankovic/RestService/handlers"
@@ -29,12 +30,22 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer conn.Close()
+	defer func(conn *grpc.ClientConn) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
 	connAcc, err := grpc.Dial("accommodation-service:9093", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
 	}
-	defer conn.Close()
+	defer func(conn *grpc.ClientConn) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
 	cc := protos.NewProfileClient(conn)
 	acc := protosAcc.NewAccommodationClient(connAcc)
 	hh := handlers.NewPorfilehendler(l, cc)
@@ -44,7 +55,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer conn.Close()
+	defer func(conn *grpc.ClientConn) {
+		err := conn.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}(conn)
 
 	ccAuth := protosAuth.NewAuthClient(connAuth)
 	hhAuth := handlers.NewAuthHandler(l, ccAuth, hh)
@@ -66,7 +82,7 @@ func main() {
 	go func() {
 		log.Println("server starting")
 		if err := srv.ListenAndServe(); err != nil {
-			if err != http.ErrServerClosed {
+			if !errors.Is(err, http.ErrServerClosed) {
 				log.Fatal(err)
 			}
 		}
