@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"time"
+
 	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
 	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/glavno"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	"github.com/golang-jwt/jwt/v5"
-	"io"
-	"net/http"
-	"time"
 )
 
 func StreamToByte(stream io.Reader) []byte {
@@ -76,16 +77,27 @@ func DecodeBodyAuth(r io.Reader) (*RequestRegister, error) {
 	}
 	return &rt, nil
 }
-func DecodeBodyAuth2(r io.Reader) (*protosAuth.AuthRequest, error) {
+func DecodeBodyAuth2(r io.Reader) (*protosAuth.AuthGet, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
 
-	var rt protosAuth.AuthRequest
-	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+	var rt protosAuth.AuthGet
+	if err := json.NewDecoder(r).Decode(&rt); err != nil {
 		return nil, err
 	}
 	return &rt, nil
 }
+func DecodeBodyAuthLog(r io.Reader) (*protosAuth.AuthRequest, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosAuth.AuthRequest
+	if err := json.NewDecoder(r).Decode(&rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
+
 func GetUser(email string, token string) (*protos.ProfileResponse, error) {
 	url := "http://rest_service/9090/profile/" + email
 

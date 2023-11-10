@@ -89,7 +89,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
 		return
 	}
-	rt, err := DecodeBodyAuth2(r.Body)
+	rt, err := DecodeBodyAuthLog(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusAccepted)
 		return
@@ -108,29 +108,17 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *AuthHandler) GetTicket(w http.ResponseWriter, r *http.Request) {
-	contentType := r.Header.Get("Content-Type")
-	mediatype, _, err := mime.ParseMediaType(contentType)
+	vars := mux.Vars(r)
+	email := vars["email"]
+
+	response, err := h.cc.GetTicket(context.Background(), &protosAuth.AuthGet{Email: email})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	if mediatype != "application/json" {
-		err := errors.New("Expect application/json Content-Type")
-		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
-		return
-	}
-	rt, err := DecodeBodyAuth2(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusAccepted)
-		return
-	}
-	response, err := h.cc.GetTicket(context.Background(), rt)
-	if err != nil {
-		log.Println("RPC failed: %v", err)
+		log.Println("RPC failed: ", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Failed to get ticket"))
 		return
 	}
+
 	w.WriteHeader(http.StatusOK)
 	RenderJSON(w, response)
 }
