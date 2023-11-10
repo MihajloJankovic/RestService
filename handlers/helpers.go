@@ -3,7 +3,6 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -98,38 +97,6 @@ func DecodeBodyAuthLog(r io.Reader) (*protosAuth.AuthRequest, error) {
 	return &rt, nil
 }
 
-func GetUser(email string, token string) (*protos.ProfileResponse, error) {
-	url := "http://rest_service/9090/profile/" + email
-
-	// Make the GET request
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		fmt.Println("Error creating request:", err)
-		return nil, err
-	}
-
-	// Set the "jwt" header with the JWT token
-	req.Header.Set("jwt", token)
-
-	// Make the request
-	client := &http.Client{}
-	response, err := client.Do(req)
-	if err != nil {
-		err := errors.New("server error: some service is not responding")
-		return nil, err
-	}
-	// Read the response body
-	if response.StatusCode != http.StatusOK {
-		err := errors.New("server error: some service is not responding")
-		return nil, err
-	}
-	rt, err := DecodeBody(response.Body)
-	if err != nil {
-		err := errors.New("server error: some service is not responding")
-		return nil, err
-	}
-	return rt, nil
-}
 func ToJSON(response *protos.ProfileResponse) (string, error) {
 	jsonData, err := json.Marshal(response)
 	if err != nil {
