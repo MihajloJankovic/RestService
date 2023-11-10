@@ -59,7 +59,9 @@ func main() {
 	router.HandleFunc("/update-accommodation", acch.UpdateAccommodation).Methods("POST")
 	router.HandleFunc("/register", hhAuth.Register).Methods("POST")
 	router.HandleFunc("/login", hhAuth.Login).Methods("POST")
-	router.HandleFunc("/getAuth", hhAuth.GetAuth).Methods("GET")
+	router.HandleFunc("/getTicket/{email}", hhAuth.GetTicket).Methods("GET")
+	router.HandleFunc("/activate/{email}/{ticket}", hhAuth.Activate).Methods("PUT")
+
 	srv := &http.Server{Addr: ":9090", Handler: router}
 	go func() {
 		log.Println("server starting")

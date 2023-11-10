@@ -3,11 +3,13 @@ package handlers
 import (
 	"context"
 	"errors"
-	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
-	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	"log"
 	"mime"
 	"net/http"
+
+	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
+	protos "github.com/MihajloJankovic/profile-service/protos/main"
+	"github.com/gorilla/mux"
 )
 
 type AuthHandler struct {
@@ -105,22 +107,47 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	RenderJSON(w, response)
 }
 
-func (h *AuthHandler) GetAuth(w http.ResponseWriter, r *http.Request) {
-	res := ValidateJwt(r, h.hh)
-	if res == nil {
-		err := errors.New("jwt error")
-		http.Error(w, err.Error(), http.StatusForbidden)
+func (h *AuthHandler) GetTicket(w http.ResponseWriter, r *http.Request) {
+	contentType := r.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	req := new(protosAuth.AuthGet)
-	auths, err := h.cc.GetAuth(context.Background(), req)
+	if mediatype != "application/json" {
+		err := errors.New("Expect application/json Content-Type")
+		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
+		return
+	}
+	rt, err := DecodeBodyAuth2(r.Body)
 	if err != nil {
-		log.Println("Failed to get authentication data:", err)
+		http.Error(w, err.Error(), http.StatusAccepted)
+		return
+	}
+	response, err := h.cc.GetTicket(context.Background(), rt)
+	if err != nil {
+		log.Println("RPC failed: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to get authentication data"))
+		w.Write([]byte("Failed to get ticket"))
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	RenderJSON(w, response)
+}
+
+func (h *AuthHandler) Activate(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	email := params["email"]
+	ticket := params["ticket"]
+
+	response, err := h.cc.Activate(context.Background(), &protosAuth.ActivateRequest{Email: email, Ticket: ticket})
+	if err != nil {
+		log.Println("RPC failed:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to activate account"))
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	RenderJSON(w, auths)
+	RenderJSON(w, response)
 }
