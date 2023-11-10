@@ -38,7 +38,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if mediatype != "application/json" {
-		err := errors.New("Expect application/json Content-Type")
+		err := errors.New("expect application/json Content-Type")
 		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
 		return
 	}
@@ -58,16 +58,19 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	out2.Gender = rt.Gender
 	out2.Role = "Guest"
 	payload, err := ToJSON(out2)
-	val := h.hh.SetProfile(w, r, payload)
+	val := h.hh.SetProfile(w, payload)
 	if val == false {
 		w.WriteHeader(http.StatusBadRequest)
 		RenderJSON(w, "couldn't create user,some service is not available'")
 	} else {
 		_, err := h.cc.Register(context.Background(), out)
 		if err != nil {
-			log.Println("RPC failed: %v", err)
+			log.Printf("RPC failed: %v\n", err)
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Registration failed"))
+			_, err := w.Write([]byte("Registration failed"))
+			if err != nil {
+				return
+			}
 			return
 		}
 		w.WriteHeader(http.StatusCreated)
@@ -83,7 +86,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if mediatype != "application/json" {
-		err := errors.New("Expect application/json Content-Type")
+		err := errors.New("expect application/json Content-Type")
 		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
 		return
 	}
@@ -94,9 +97,12 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	response, err := h.cc.Login(context.Background(), rt)
 	if err != nil {
-		log.Println("RPC failed: %v", err)
+		log.Printf("RPC failed: %v\n", err)
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Login failed"))
+		_, err := w.Write([]byte("Login failed"))
+		if err != nil {
+			return
+		}
 		return
 	}
 	GenerateJwt(w, rt.GetEmail())
@@ -112,15 +118,15 @@ func (h *AuthHandler) GetAuth(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
-	req := new(protosAuth.AuthGet)
-	auths, err := h.cc.GetAuth(context.Background(), req)
-	if err != nil {
-		log.Println("Failed to get authentication data:", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to get authentication data"))
-		return
-	}
+	//req := new(protosAuth.AuthGet)
+	//auths, err := h.cc.GetAuth(context.Background(), req)
+	//if err != nil {
+	//	log.Println("Failed to get authentication data:", err)
+	//	w.WriteHeader(http.StatusInternalServerError)
+	//	w.Write([]byte("Failed to get authentication data"))
+	//	return
+	//}
 
-	w.WriteHeader(http.StatusOK)
-	RenderJSON(w, auths)
+	//w.WriteHeader(http.StatusOK)
+	//RenderJSON(w, auths)
 }
