@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"errors"
-	"fmt"
 	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/glavno"
 	"github.com/gorilla/mux"
 	"log"
@@ -74,8 +73,6 @@ func (h *AccommodationHandler) GetAccommodation(w http.ResponseWriter, r *http.R
 		return
 	}
 	re := res
-	fmt.Println(re.GetRole())
-	fmt.Println(re.GetRole() != "Host")
 	if re.GetRole() != "Host" {
 		err := errors.New("you are not host")
 		http.Error(w, err.Error(), http.StatusForbidden)
