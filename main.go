@@ -76,7 +76,7 @@ func main() {
 	router.HandleFunc("/register", hhAuth.Register).Methods("POST")
 	router.HandleFunc("/login", hhAuth.Login).Methods("POST")
 	router.HandleFunc("/getTicket/{email}", hhAuth.GetTicket).Methods("GET")
-	router.HandleFunc("/activate/{email}/{ticket}", hhAuth.Activate).Methods("PUT")
+	router.HandleFunc("/activate/{email}/{ticket}", hhAuth.Activate).Methods("GET")
 
 	srv := &http.Server{Addr: ":9090", Handler: router}
 	go func() {
