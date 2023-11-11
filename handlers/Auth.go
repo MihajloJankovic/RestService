@@ -134,7 +134,7 @@ func (h *AuthHandler) Activate(w http.ResponseWriter, r *http.Request) {
 	email := params["email"]
 	ticket := params["ticket"]
 
-	response, err := h.cc.Activate(context.Background(), &protosAuth.ActivateRequest{Email: email, Ticket: ticket})
+	_, err := h.cc.Activate(context.Background(), &protosAuth.ActivateRequest{Email: email, Ticket: ticket})
 	if err != nil {
 		log.Println("RPC failed:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -143,6 +143,6 @@ func (h *AuthHandler) Activate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	RenderJSON(w, response)
+	RenderJSON(w, "Activated account")
 
 }
