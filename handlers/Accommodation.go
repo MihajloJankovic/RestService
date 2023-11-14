@@ -96,6 +96,34 @@ func (h *AccommodationHandler) GetAccommodation(w http.ResponseWriter, r *http.R
 	w.WriteHeader(http.StatusOK)
 	RenderJSON(w, response.Dummy)
 }
+func (h *AccommodationHandler) GetAllAccommodation(w http.ResponseWriter, r *http.Request) {
+	res := ValidateJwt(r, h.hh)
+	if res == nil {
+		err := errors.New("jwt error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	re := res
+	if re.GetRole() != "Host" {
+		err := errors.New("you are not host")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	emptyRequest := new(protosAcc.Emptya)
+	response, err := h.acc.GetAllAccommodation(context.Background(), emptyRequest)
+	if err != nil || response == nil {
+		log.Printf("RPC failed: %v\n", err)
+		w.WriteHeader(http.StatusNotAcceptable)
+		_, err := w.Write([]byte("Accommodation not found"))
+		if err != nil {
+			return
+		}
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	RenderJSON(w, response.Dummy)
+}
+
 func (h *AccommodationHandler) UpdateAccommodation(w http.ResponseWriter, r *http.Request) {
 
 	contentType := r.Header.Get("Content-Type")
