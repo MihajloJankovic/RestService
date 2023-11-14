@@ -1,13 +1,16 @@
 module github.com/MihajloJankovic/RestService
 
-go 1.21.1
+go 1.21.3
 
-toolchain go1.21.3
 
 require (
 	github.com/MihajloJankovic/Auth-Service v0.0.0-20231108171815-89f21a1d8b09
 	github.com/MihajloJankovic/accommodation-service v0.0.0-20231109124912-e2618976b7af
 	github.com/MihajloJankovic/profile-service v0.0.0-20231108074029-a6f37a7f3eda
+	github.com/MihajloJankovic/Auth-Service v0.0.0-20231111104719-45165239e27c
+	github.com/MihajloJankovic/accommodation-service v0.0.0-20231114150047-f59cf5d1b5c2
+	github.com/MihajloJankovic/profile-service v0.0.0-20231111103831-d337fadd3efd
+	github.com/MihajloJankovic/reservation-service v0.0.0-20231114174844-330596009fc6
 	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/gorilla/mux v1.8.1
 	google.golang.org/grpc v1.59.0

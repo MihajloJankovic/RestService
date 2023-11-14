@@ -8,6 +8,7 @@ import (
 	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
 	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/glavno"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
+	protosRes "github.com/MihajloJankovic/reservation-service/protos/genfiles"
 	"github.com/golang-jwt/jwt/v5"
 	"io"
 	"net/http"
@@ -60,6 +61,17 @@ func DecodeBodyAcc(r io.Reader) (*protosAcc.AccommodationResponse, error) {
 	dec.DisallowUnknownFields()
 
 	var rt protosAcc.AccommodationResponse
+	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
+
+func DecodeBodyRes(r io.Reader) (*protosRes.ReservationResponse, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosRes.ReservationResponse
 	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
 		return nil, err
 	}
