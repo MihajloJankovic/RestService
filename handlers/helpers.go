@@ -79,11 +79,12 @@ func DecodeBodyAuth(r io.Reader) (*RequestRegister, error) {
 	}
 	return &rt, nil
 }
+
 func DecodeBodyAuth2(r io.Reader) (*protosAuth.AuthGet, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
 
-	var rt protosAuth.AuthGet
+	var rt protosAuth.
 	if err := json.NewDecoder(r).Decode(&rt); err != nil {
 		return nil, err
 	}
