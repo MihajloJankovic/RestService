@@ -57,7 +57,7 @@ func (h *AccommodationHandler) SetAccommodation(w http.ResponseWriter, r *http.R
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
-	rt.Id = (uuid.New()).String()
+	rt.Uid = (uuid.New()).String()
 	_, err = h.acc.SetAccommodation(context.Background(), rt)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
