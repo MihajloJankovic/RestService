@@ -1,7 +1,7 @@
 github.com/MihajloJankovic/Auth-Service v0.0.0-20231111104719-45165239e27c h1:sUJmPCafqojB5SozYrL1Gd9bGBbq1/p7GPHSFsc2oFw=
 github.com/MihajloJankovic/Auth-Service v0.0.0-20231111104719-45165239e27c/go.mod h1:cvz+PKnFuVg/icLpe/Q8r3MpZ0/Uw+Rggt/lLeTCYgo=
-github.com/MihajloJankovic/accommodation-service v0.0.0-20231114150047-f59cf5d1b5c2 h1:WVRq0wIKvDPZOS0d7BVQ5ADG3RQRKgiAd6iwLGzIGlg=
-github.com/MihajloJankovic/accommodation-service v0.0.0-20231114150047-f59cf5d1b5c2/go.mod h1:4VbUGgvtmepLoeNbp7nYIrueIJIvrQT83CSd1qrFB4s=
+github.com/MihajloJankovic/accommodation-service v0.0.0-20231115071714-c626ec9d1770 h1:zX04ORE6PaZDAXe4a/5+J6+0ebkdJmhRKKr07qkcLfw=
+github.com/MihajloJankovic/accommodation-service v0.0.0-20231115071714-c626ec9d1770/go.mod h1:4VbUGgvtmepLoeNbp7nYIrueIJIvrQT83CSd1qrFB4s=
 github.com/MihajloJankovic/profile-service v0.0.0-20231111103831-d337fadd3efd h1:DdtLDF0xzLDTYkyKN7X9/taljdU+kmXiekLLsrQuWEI=
 github.com/MihajloJankovic/profile-service v0.0.0-20231111103831-d337fadd3efd/go.mod h1:iFw+fWt+Jko84FyVPpDiD4EUF9ZozT0lnMoTlEyYNfM=
 github.com/golang-jwt/jwt/v5 v5.1.0 h1:UGKbA/IPjtS6zLcdB7i5TyACMgSbOTiR8qzXgw8HWQU=
@@ -12,6 +12,8 @@ github.com/golang/protobuf v1.5.3/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiu
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
 github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
+github.com/google/uuid v1.3.1 h1:KjJaJ9iWZ3jOFZIf1Lqf4laDRCasjl0BCmnEGxkdLb4=
+github.com/google/uuid v1.3.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/gorilla/mux v1.8.1 h1:TuBL49tXwgrFYWhqrNgrUNEY92u81SPhu7sTdzQEiWY=
 github.com/gorilla/mux v1.8.1/go.mod h1:AKf9I4AEqPTmMytcMc0KkNouC66V3BtZ4qD5fmWSiMQ=
 golang.org/x/net v0.17.0 h1:pVaXccu2ozPjCXewfr1S7xza/zcXTity9cCdXQYSjIM=

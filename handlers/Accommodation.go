@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/glavno"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"log"
 	"mime"
@@ -56,11 +57,46 @@ func (h *AccommodationHandler) SetAccommodation(w http.ResponseWriter, r *http.R
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
+	rt.Id = uuid.New().String()
 	_, err = h.acc.SetAccommodation(context.Background(), rt)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
 	}
 	w.WriteHeader(http.StatusCreated)
+}
+func (h *AccommodationHandler) GetOneAccommodation(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	ee := new(protosAcc.AccommodationRequestOne)
+	ee.Id = id
+	res := ValidateJwt(r, h.hh)
+	if res == nil {
+		err := errors.New("jwt error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	re := res
+	if re.GetRole() != "Host" {
+		err := errors.New("you are not host")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	if re.GetEmail() != "" {
+		err := errors.New("authorization error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	response, err := h.acc.GetOneAccommodation(context.Background(), ee)
+	if err != nil || response == nil {
+		log.Printf("RPC failed: %v\n", err)
+		w.WriteHeader(http.StatusNotAcceptable)
+		_, err := w.Write([]byte("Accommodation not found"))
+		if err != nil {
+			return
+		}
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	RenderJSON(w, response)
 }
 func (h *AccommodationHandler) GetAccommodation(w http.ResponseWriter, r *http.Request) {
 	emaila := mux.Vars(r)["email"]
