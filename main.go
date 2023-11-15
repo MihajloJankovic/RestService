@@ -71,7 +71,7 @@ func main() {
 	router.HandleFunc("/profile/{email}", hh.GetProfile).Methods("GET")
 	router.HandleFunc("/update-profile", hh.UpdateProfile).Methods("POST")
 	router.HandleFunc("/accommodation/{email}", acch.GetAccommodation).Methods("GET")
-	router.HandleFunc("/accommodation/all", acch.GetAllAccommodation).Methods("GET")
+	router.HandleFunc("/accommodations", acch.GetAllAccommodation).Methods("GET")
 	router.HandleFunc("/add-accommodation", acch.SetAccommodation).Methods("POST")
 	router.HandleFunc("/update-accommodation", acch.UpdateAccommodation).Methods("POST")
 	router.HandleFunc("/register", hhAuth.Register).Methods("POST")
