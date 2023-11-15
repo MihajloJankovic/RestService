@@ -4,10 +4,10 @@ go 1.21.3
 
 require (
 	github.com/MihajloJankovic/Auth-Service v0.0.0-20231111104719-45165239e27c
-	github.com/MihajloJankovic/accommodation-service v0.0.0-20231115071714-c626ec9d1770
+	github.com/MihajloJankovic/accommodation-service v0.0.0-20231115090604-4506ee88ce50
 	github.com/MihajloJankovic/profile-service v0.0.0-20231111103831-d337fadd3efd
 	github.com/golang-jwt/jwt/v5 v5.1.0
-	github.com/google/uuid v1.3.1
+	github.com/google/uuid v1.4.0
 	github.com/gorilla/mux v1.8.1
 	google.golang.org/grpc v1.59.0
 )

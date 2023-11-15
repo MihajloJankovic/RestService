@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"errors"
-	"fmt"
 	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/glavno"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -59,7 +58,6 @@ func (h *AccommodationHandler) SetAccommodation(w http.ResponseWriter, r *http.R
 		return
 	}
 	rt.Id = (uuid.New()).String()
-	fmt.Println((uuid.New()).String())
 	_, err = h.acc.SetAccommodation(context.Background(), rt)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
