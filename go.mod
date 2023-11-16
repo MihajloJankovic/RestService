@@ -6,6 +6,7 @@ require (
 	github.com/MihajloJankovic/Auth-Service v0.0.0-20231115203932-9de42de35511
 	github.com/MihajloJankovic/accommodation-service v0.0.0-20231116210700-7e0e30005deb
 	github.com/MihajloJankovic/profile-service v0.0.0-20231111103831-d337fadd3efd
+	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/google/uuid v1.4.0
 	github.com/gorilla/mux v1.8.1
 	google.golang.org/grpc v1.59.0

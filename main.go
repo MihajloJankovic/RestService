@@ -8,16 +8,15 @@ import (
 	"github.com/MihajloJankovic/RestService/handlers"
 	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/main"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
+	"github.com/gorilla/mux"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
-
-	"github.com/gorilla/mux"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
