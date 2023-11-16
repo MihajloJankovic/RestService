@@ -6,10 +6,8 @@ import (
 
 	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
 	"github.com/MihajloJankovic/RestService/handlers"
-	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/glavno"
+	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/main"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
-
-	//protosAcc "github.com/MihajloJankovic/accommodation-service/protos/main"
 	"log"
 	"net/http"
 	"os"

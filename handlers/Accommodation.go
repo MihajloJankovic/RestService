@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 	"errors"
-	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/glavno"
+	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/main"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"log"
