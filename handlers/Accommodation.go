@@ -9,6 +9,7 @@ import (
 	"log"
 	"mime"
 	"net/http"
+	"strconv"
 )
 
 type AccommodationHandler struct {
@@ -210,4 +211,37 @@ func (h *AccommodationHandler) UpdateAccommodation(w http.ResponseWriter, r *htt
 	if err != nil {
 		return
 	}
+}
+
+func (h *AccommodationHandler) FilterByPriceRange(w http.ResponseWriter, r *http.Request) {
+	// Uzmi parametre iz query stringa
+	minPriceStr := r.URL.Query().Get("min_price")
+	maxPriceStr := r.URL.Query().Get("max_price")
+
+	// Konvertuj stringove u float64
+	minPrice, err := strconv.ParseFloat(minPriceStr, 64)
+	if err != nil {
+		http.Error(w, "Invalid min_price parameter", http.StatusBadRequest)
+		return
+	}
+
+	maxPrice, err := strconv.ParseFloat(maxPriceStr, 64)
+	if err != nil {
+		http.Error(w, "Invalid max_price parameter", http.StatusBadRequest)
+		return
+	}
+
+	// Pozovi odgovarajuću metodu na AccommodationClient i obradi rezultat
+	filteredAccommodations, err := h.acc.FilterByPriceRange(context.Background(), &protosAcc.PriceRangeRequest{
+		MinPrice: float32(minPrice),
+		MaxPrice: float32(maxPrice),
+	})
+
+	if err != nil {
+		http.Error(w, "Error filtering accommodations", http.StatusInternalServerError)
+		return
+	}
+
+	// Konvertuj rezultate u JSON i pošalji klijentu
+	RenderJSON(w, filteredAccommodations.Dummy)
 }

@@ -146,3 +146,38 @@ func (h *AuthHandler) Activate(w http.ResponseWriter, r *http.Request) {
 	RenderJSON(w, "Activated account")
 
 }
+
+func (h *AuthHandler) ChangePassword(w http.ResponseWriter, r *http.Request) {
+	contentType := r.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		err := errors.New("expect application/json Content-Type")
+		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
+		return
+	}
+	rt, err := DecodeBodyPassword(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusAccepted)
+		return
+	}
+	out := new(protosAuth.ChangePasswordRequest)
+	out.Email = rt.Email
+	out.CurrentPassword = rt.CurrentPassword
+	out.NewPassword = rt.NewPassword
+
+	_, err = h.cc.ChangePassword(context.Background(), out)
+	if err != nil {
+		log.Println("RPC failed: ", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failure in password changing!"))
+		return
+	}
+
+	w.WriteHeader(http.StatusAccepted)
+	RenderJSON(w, "Password changed successfully!")
+
+}

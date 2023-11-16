@@ -7,11 +7,6 @@ import (
 	"io"
 	"net/http"
 	"time"
-
-	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
-	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/glavno"
-	protos "github.com/MihajloJankovic/profile-service/protos/main"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 func StreamToByte(stream io.Reader) []byte {
@@ -80,11 +75,11 @@ func DecodeBodyAuth(r io.Reader) (*RequestRegister, error) {
 	return &rt, nil
 }
 
-func DecodeBodyAuth2(r io.Reader) (*protosAuth.AuthGet, error) {
+func DecodeBodyPassword(r io.Reader) (*protosAuth.ChangePasswordRequest, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
 
-	var rt protosAuth.
+	var rt protosAuth.ChangePasswordRequest
 	if err := json.NewDecoder(r).Decode(&rt); err != nil {
 		return nil, err
 	}
