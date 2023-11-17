@@ -151,3 +151,33 @@ func ValidateJwt(r *http.Request, h *Porfilehendler) *protos.ProfileResponse {
 	}
 	return rt
 }
+
+func DecodeBodyPriceRangeFilter(r io.Reader) (*protosAcc.PriceRangeRequest, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosAcc.PriceRangeRequest
+	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
+
+func DecodeBodyAmenitiesFilter(r io.Reader) (*protosAcc.AmenitiesRequest, error) {
+	var rt protosAcc.AmenitiesRequest
+	if err := json.NewDecoder(r).Decode(&rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
+
+func DecodeBodyHostFilter(r io.Reader) (*protosAcc.HostRequest, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosAcc.HostRequest
+	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
