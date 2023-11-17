@@ -9,7 +9,6 @@ import (
 	"log"
 	"mime"
 	"net/http"
-	"strconv"
 )
 
 type AccommodationHandler struct {
@@ -214,34 +213,52 @@ func (h *AccommodationHandler) UpdateAccommodation(w http.ResponseWriter, r *htt
 }
 
 func (h *AccommodationHandler) FilterByPriceRange(w http.ResponseWriter, r *http.Request) {
-	// Uzmi parametre iz query stringa
-	minPriceStr := r.URL.Query().Get("min_price")
-	maxPriceStr := r.URL.Query().Get("max_price")
 
-	// Konvertuj stringove u float64
-	minPrice, err := strconv.ParseFloat(minPriceStr, 64)
+	filter, err := DecodeBodyPriceRangeFilter(r.Body)
 	if err != nil {
-		http.Error(w, "Invalid min_price parameter", http.StatusBadRequest)
+		http.Error(w, "Invalid filter parameters", http.StatusBadRequest)
 		return
 	}
 
-	maxPrice, err := strconv.ParseFloat(maxPriceStr, 64)
-	if err != nil {
-		http.Error(w, "Invalid max_price parameter", http.StatusBadRequest)
-		return
-	}
-
-	// Pozovi odgovarajuću metodu na AccommodationClient i obradi rezultat
-	filteredAccommodations, err := h.acc.FilterByPriceRange(context.Background(), &protosAcc.PriceRangeRequest{
-		MinPrice: float32(minPrice),
-		MaxPrice: float32(maxPrice),
-	})
-
+	filteredAccommodations, err := h.acc.FilterByPriceRange(context.Background(), filter)
 	if err != nil {
 		http.Error(w, "Error filtering accommodations", http.StatusInternalServerError)
 		return
 	}
 
-	// Konvertuj rezultate u JSON i pošalji klijentu
+	RenderJSON(w, filteredAccommodations.Dummy)
+}
+
+func (h *AccommodationHandler) FilterByAmenities(w http.ResponseWriter, r *http.Request) {
+
+	filter, err := DecodeBodyAmenitiesFilter(r.Body)
+	if err != nil {
+		http.Error(w, "Invalid filter parameters", http.StatusBadRequest)
+		return
+	}
+
+	filteredAccommodations, err := h.acc.FilterByAmenities(context.Background(), filter)
+	if err != nil {
+		http.Error(w, "Error filtering accommodations", http.StatusInternalServerError)
+		return
+	}
+
+	RenderJSON(w, filteredAccommodations.Dummy)
+}
+
+func (h *AccommodationHandler) FilterByHost(w http.ResponseWriter, r *http.Request) {
+
+	filter, err := DecodeBodyHostFilter(r.Body)
+	if err != nil {
+		http.Error(w, "Invalid filter parameters", http.StatusBadRequest)
+		return
+	}
+
+	filteredAccommodations, err := h.acc.FilterByHost(context.Background(), filter)
+	if err != nil {
+		http.Error(w, "Error filtering accommodations", http.StatusInternalServerError)
+		return
+	}
+
 	RenderJSON(w, filteredAccommodations.Dummy)
 }
