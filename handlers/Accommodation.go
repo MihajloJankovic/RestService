@@ -231,7 +231,7 @@ func (h *AccommodationHandler) FilterByPriceRange(w http.ResponseWriter, r *http
 
 func (h *AccommodationHandler) FilterByAmenities(w http.ResponseWriter, r *http.Request) {
 
-	filter, err := DecodeBodyAmenitiesFilter(r.Body)
+	filter, err := DecodeBodyAmenities(r.Body)
 	if err != nil {
 		http.Error(w, "Invalid filter parameters", http.StatusBadRequest)
 		return
