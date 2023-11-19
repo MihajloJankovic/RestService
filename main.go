@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	protosava "github.com/MihajloJankovic/Aviability-Service/protos/main"
 
 	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
 	"github.com/MihajloJankovic/RestService/handlers"
@@ -61,21 +62,40 @@ func main() {
 
 	ccAuth := protosAuth.NewAuthClient(connAuth)
 	hhAuth := handlers.NewAuthHandler(l, ccAuth, hh)
+	connAva, err := grpc.Dial("avaibility-service:9095", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		panic(err)
+	}
+	defer func(conn *grpc.ClientConn) {
+		err := conn.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}(conn)
+	la := log.New(os.Stdout, "standard-avaibility-api", log.LstdFlags)
+	ccava := protosava.NewAccommodationAviabilityClient(connAva)
+	hhava := handlers.NewAvabilityHendler(la, ccava, acc, hh)
 
 	router := mux.NewRouter()
 	router.StrictSlash(true)
-
+	//profile
 	router.HandleFunc("/profile/{email}", hh.GetProfile).Methods("GET")
 	router.HandleFunc("/update-profile", hh.UpdateProfile).Methods("POST")
+	//accommondation
 	router.HandleFunc("/accommodation/{email}", acch.GetAccommodation).Methods("GET")
 	router.HandleFunc("/accommodations", acch.GetAllAccommodation).Methods("GET")
 	router.HandleFunc("/add-accommodation", acch.SetAccommodation).Methods("POST")
 	router.HandleFunc("/update-accommodation", acch.UpdateAccommodation).Methods("POST")
+	//auth
 	router.HandleFunc("/register", hhAuth.Register).Methods("POST")
 	router.HandleFunc("/login", hhAuth.Login).Methods("POST")
 	router.HandleFunc("/getTicket/{email}", hhAuth.GetTicket).Methods("GET")
 	router.HandleFunc("/activate/{email}/{ticket}", hhAuth.Activate).Methods("GET")
 	router.HandleFunc("/change-password", hhAuth.ChangePassword).Methods("POST")
+	//avaibility
+	router.HandleFunc("/set-avaibility", hhava.SetAvability).Methods("POST")
+	router.HandleFunc("/get-all-avaibility", hhava.GetAllbyId).Methods("POST")
+	router.HandleFunc("/check-avaibility", hhava.CheckAvaibility).Methods("POST")
 
 	srv := &http.Server{Addr: ":9090", Handler: router}
 	go func() {
