@@ -8,6 +8,7 @@ import (
 	"log"
 	"mime"
 	"net/http"
+	"strconv"
 )
 
 type ReservationHandler struct {
@@ -46,12 +47,7 @@ func (h *ReservationHandler) SetReservation(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	re := res
-	if re.GetRole() != "Host" {
-		err := errors.New("you are not host")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
-	if re.Get() != rt.GetId() {
+	if re.GetEmail() != rt.GetEmail() {
 		err := errors.New("authorization error")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
@@ -65,21 +61,11 @@ func (h *ReservationHandler) SetReservation(w http.ResponseWriter, r *http.Reque
 func (h *ReservationHandler) GetReservation(w http.ResponseWriter, r *http.Request) {
 	ida := mux.Vars(r)["id"]
 	ee := new(protosRes.ReservationRequest)
-	ee.Id = ida
+	vv, _ := strconv.ParseInt(ida, 10, 32)
+	ee.Id = int32(vv)
 	res := ValidateJwt(r, h.hh)
 	if res == nil {
 		err := errors.New("jwt error")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
-	re := res
-	if re.GetRole() != "Host" {
-		err := errors.New("you are not host")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
-	if re.GetId() != ee.GetId() {
-		err := errors.New("authorization error")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
@@ -110,7 +96,7 @@ func (h *ReservationHandler) GetAllReservation(w http.ResponseWriter, r *http.Re
 		return
 	}
 	emptyRequest := new(protosRes.Emptyaa)
-	response, err := h.acc.GetAllReservation(context.Background(), emptyRequest)
+	response, err := h.acc.GetAllReservations(context.Background(), emptyRequest)
 	if err != nil || response == nil {
 		log.Printf("RPC failed: %v\n", err)
 		w.WriteHeader(http.StatusNotAcceptable)
