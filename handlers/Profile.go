@@ -21,17 +21,19 @@ func NewPorfilehendler(l *log.Logger, cc protos.ProfileClient) *Porfilehendler {
 
 }
 
-func (h *Porfilehendler) SetProfile(w http.ResponseWriter, r *http.Request, sg string) bool {
+func (h *Porfilehendler) SetProfile(w http.ResponseWriter, sg string) bool {
 
 	rt, err := DecodeBodyPorfileadd(sg)
-	rt.Role = "Guest"
+	if !(rt.GetRole() == "Guest" || rt.GetRole() == "Host") {
+		rt.Role = "Guest"
+	}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusAccepted)
 		return false
 	}
 	_, err = h.cc.SetProfile(context.Background(), rt)
 	if err != nil {
-		log.Println("RPC failed: %v", err)
+		log.Printf("RPC failed: %v\n", err)
 		return false
 	}
 	return true
@@ -47,7 +49,7 @@ func (h *Porfilehendler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
-	re := *res
+	re := res
 	if re.GetEmail() != ee.GetEmail() {
 		err := errors.New("authorization error")
 		http.Error(w, err.Error(), http.StatusForbidden)
@@ -55,9 +57,12 @@ func (h *Porfilehendler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	}
 	response, err := h.cc.GetProfile(context.Background(), ee)
 	if err != nil || response == nil {
-		log.Println("RPC failed: %v", err)
+		log.Printf("RPC failed: %v\n", err)
 		w.WriteHeader(http.StatusNotAcceptable)
-		w.Write([]byte("Profile not found"))
+		_, err := w.Write([]byte("Profile not found"))
+		if err != nil {
+			return
+		}
 		return
 	}
 	w.WriteHeader(http.StatusOK)
@@ -71,7 +76,7 @@ func (h *Porfilehendler) GetProfileInner(emaili string) (*protos.ProfileResponse
 
 	response, err := h.cc.GetProfile(context.Background(), ee)
 	if err != nil || response == nil {
-		log.Println("RPC failed: %v", err)
+		log.Printf("RPC failed: %v\n", err)
 		err := errors.New("rpc failed to get inner profile")
 		return nil, err
 	}
@@ -86,7 +91,7 @@ func (h *Porfilehendler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if mediatype != "application/json" {
-		err := errors.New("Expect application/json Content-Type")
+		err := errors.New("expect application/json Content-Type")
 		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
 		return
 	}
@@ -101,7 +106,7 @@ func (h *Porfilehendler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
-	re := *res
+	re := res
 	if re.GetEmail() != rt.GetEmail() {
 		err := errors.New("authorization error")
 		http.Error(w, err.Error(), http.StatusForbidden)
@@ -109,11 +114,17 @@ func (h *Porfilehendler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err = h.cc.UpdateProfile(context.Background(), rt)
 	if err != nil {
-		log.Println("RPC failed: %v", err)
+		log.Printf("RPC failed: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Couldn't update profile"))
+		_, err := w.Write([]byte("Couldn't update profile"))
+		if err != nil {
+			return
+		}
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Successfully update profile"))
+	_, err = w.Write([]byte("Successfully update profile"))
+	if err != nil {
+		return
+	}
 }

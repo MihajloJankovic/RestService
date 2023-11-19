@@ -3,10 +3,10 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
-	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/glavno"
+	protosava "github.com/MihajloJankovic/Aviability-Service/protos/main"
+	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/main"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	protosRes "github.com/MihajloJankovic/reservation-service/protos/genfiles"
 	"github.com/golang-jwt/jwt/v5"
@@ -17,7 +17,10 @@ import (
 
 func StreamToByte(stream io.Reader) []byte {
 	buf := new(bytes.Buffer)
-	buf.ReadFrom(stream)
+	_, err := buf.ReadFrom(stream)
+	if err != nil {
+		return nil
+	}
 	return buf.Bytes()
 }
 func GenerateJwt(w http.ResponseWriter, email string) {
@@ -43,6 +46,37 @@ func DecodeBody(r io.Reader) (*protos.ProfileResponse, error) {
 	dec.DisallowUnknownFields()
 
 	var rt protos.ProfileResponse
+	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
+
+func DecodeBodyAva(r io.Reader) (*protosava.CheckSet, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosava.CheckSet
+	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
+func DecodeBodyAva3(r io.Reader) (*protosava.GetAllRequest, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosava.GetAllRequest
+	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
+func DecodeBodyAva2(r io.Reader) (*protosava.CheckRequest, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosava.CheckRequest
 	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
 		return nil, err
 	}
@@ -88,47 +122,27 @@ func DecodeBodyAuth(r io.Reader) (*RequestRegister, error) {
 	}
 	return &rt, nil
 }
-func DecodeBodyAuth2(r io.Reader) (*protosAuth.AuthRequest, error) {
+
+func DecodeBodyPassword(r io.Reader) (*protosAuth.ChangePasswordRequest, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
 
-	var rt protosAuth.AuthRequest
-	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+	var rt protosAuth.ChangePasswordRequest
+	if err := json.NewDecoder(r).Decode(&rt); err != nil {
 		return nil, err
 	}
 	return &rt, nil
 }
-func GetUser(email string, token string) (*protos.ProfileResponse, error) {
-	url := "http://rest_service/9090/profile/" + email
 
-	// Make the GET request
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		fmt.Println("Error creating request:", err)
-		return nil, err
-	}
+func DecodeBodyAuthLog(r io.Reader) (*protosAuth.AuthRequest, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
 
-	// Set the "jwt" header with the JWT token
-	req.Header.Set("jwt", token)
-
-	// Make the request
-	client := &http.Client{}
-	response, err := client.Do(req)
-	if err != nil {
-		err := errors.New("server error: some service is not responding")
+	var rt protosAuth.AuthRequest
+	if err := json.NewDecoder(r).Decode(&rt); err != nil {
 		return nil, err
 	}
-	// Read the response body
-	if response.StatusCode != http.StatusOK {
-		err := errors.New("server error: some service is not responding")
-		return nil, err
-	}
-	rt, err := DecodeBody(response.Body)
-	if err != nil {
-		err := errors.New("server error: some service is not responding")
-		return nil, err
-	}
-	return rt, nil
+	return &rt, nil
 }
 func ToJSON(response *protos.ProfileResponse) (string, error) {
 	jsonData, err := json.Marshal(response)
@@ -146,7 +160,10 @@ func RenderJSON(w http.ResponseWriter, v interface{}) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
+	_, err = w.Write(js)
+	if err != nil {
+		return
+	}
 }
 func ValidateJwt(r *http.Request, h *Porfilehendler) *protos.ProfileResponse {
 	tokenString := r.Header.Get("jwt")
@@ -156,7 +173,7 @@ func ValidateJwt(r *http.Request, h *Porfilehendler) *protos.ProfileResponse {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
 		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
