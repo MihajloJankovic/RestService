@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"errors"
-
 	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
+	protosava "github.com/MihajloJankovic/Aviability-Service/protos/main"
 	"github.com/MihajloJankovic/RestService/handlers"
 	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/main"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
+	protosRes "github.com/MihajloJankovic/reservation-service/protos/genfiles"
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -37,16 +38,28 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer func(conn *grpc.ClientConn) {
-		err := conn.Close()
+	defer func(connAcc *grpc.ClientConn) {
+		err := connAcc.Close()
 		if err != nil {
 
 		}
-	}(conn)
+	}(connAcc)
+	connRes, err := grpc.Dial("reservation-service:9096", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		panic(err)
+	}
+	defer func(connRes *grpc.ClientConn) {
+		err := connRes.Close()
+		if err != nil {
+
+		}
+	}(connRes)
+	resc := protosRes.NewReservationClient(connRes)
 	cc := protos.NewProfileClient(conn)
 	acc := protosAcc.NewAccommodationClient(connAcc)
 	hh := handlers.NewPorfilehendler(l, cc)
 	acch := handlers.NewAccommodationHandler(l, acc, hh)
+	resh := handlers.NewReservationHandler(l, resc, hh)
 
 	connAuth, err := grpc.Dial("auth-service:9094", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -61,21 +74,45 @@ func main() {
 
 	ccAuth := protosAuth.NewAuthClient(connAuth)
 	hhAuth := handlers.NewAuthHandler(l, ccAuth, hh)
+	connAva, err := grpc.Dial("avaibility-service:9095", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		panic(err)
+	}
+	defer func(conn *grpc.ClientConn) {
+		err := conn.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}(conn)
+	la := log.New(os.Stdout, "standard-avaibility-api", log.LstdFlags)
+	ccava := protosava.NewAccommodationAviabilityClient(connAva)
+	hhava := handlers.NewAvabilityHendler(la, ccava, acc, hh)
 
 	router := mux.NewRouter()
 	router.StrictSlash(true)
-
+	//profile
 	router.HandleFunc("/profile/{email}", hh.GetProfile).Methods("GET")
 	router.HandleFunc("/update-profile", hh.UpdateProfile).Methods("POST")
+	//accommondation
 	router.HandleFunc("/accommodation/{email}", acch.GetAccommodation).Methods("GET")
 	router.HandleFunc("/accommodations", acch.GetAllAccommodation).Methods("GET")
 	router.HandleFunc("/add-accommodation", acch.SetAccommodation).Methods("POST")
 	router.HandleFunc("/update-accommodation", acch.UpdateAccommodation).Methods("POST")
+	//reservation
+	router.HandleFunc("/reservation/{id}", resh.GetReservation).Methods("GET")
+	router.HandleFunc("/reservations", resh.GetAllReservation).Methods("GET")
+	router.HandleFunc("/set-accommodation", resh.SetReservation).Methods("POST")
+	router.HandleFunc("/update-accommodation", resh.UpdateReservation).Methods("POST")
+	//auth
 	router.HandleFunc("/register", hhAuth.Register).Methods("POST")
 	router.HandleFunc("/login", hhAuth.Login).Methods("POST")
 	router.HandleFunc("/getTicket/{email}", hhAuth.GetTicket).Methods("GET")
 	router.HandleFunc("/activate/{email}/{ticket}", hhAuth.Activate).Methods("GET")
 	router.HandleFunc("/change-password", hhAuth.ChangePassword).Methods("POST")
+	//avaibility
+	router.HandleFunc("/set-avaibility", hhava.SetAvability).Methods("POST")
+	router.HandleFunc("/get-all-avaibility", hhava.GetAllbyId).Methods("POST")
+	router.HandleFunc("/check-avaibility", hhava.CheckAvaibility).Methods("POST")
 
 	srv := &http.Server{Addr: ":9090", Handler: router}
 	go func() {

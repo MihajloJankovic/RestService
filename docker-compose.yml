@@ -119,8 +119,44 @@ services:
       retries: 10
     volumes:
       - mongo_auths:/data/db
-      
+  avaibility-service:
+    container_name: avaibility-service
+    build: ../Aviability-Service
+    restart: always
+    ports:
+      - "9095:9095"
+    environment:
+      # NoSQL: environment variable holding connection URI for Mongo database
+      # protocol://username:password@hostname:port
+      - MONGO_DB_URI=mongodb://root:pass@avaibility-mongo:27017
+      # - MONGO_DB_URI=mongodb://mongo:27018
+      # NoSQL: Our service will try to connect to Mongo before it is up
+      # in order to avoid that problem, we specify that it depends on mongo service
+      # which defines the order of starting the containers
+      # Additionaly we specify that mongo service needs to pass a healthcheck
+    depends_on:
+      mongo-accommodation:
+        condition: service_healthy
+  avaibility-mongo:
+    container_name: avaibility-mongo
+    image: mongo
+    restart: always
+    ports:
+      - "27015:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pass
+      MONGO_INITDB_DATABASE: mongoAviability
+    # Docker healtcheck - checks if database is "alive"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok'
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    volumes:
+      - mongo_ava:/data/db
 volumes:
   mongo_profiles:
   mongo_accommodations:
   mongo_auths:
+  mongo_ava:

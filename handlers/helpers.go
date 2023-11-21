@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
+	protosava "github.com/MihajloJankovic/Aviability-Service/protos/main"
 	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/main"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
+	protosRes "github.com/MihajloJankovic/reservation-service/protos/genfiles"
 	"github.com/golang-jwt/jwt/v5"
 	"io"
 	"net/http"
@@ -49,6 +51,37 @@ func DecodeBody(r io.Reader) (*protos.ProfileResponse, error) {
 	}
 	return &rt, nil
 }
+
+func DecodeBodyAva(r io.Reader) (*protosava.CheckSet, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosava.CheckSet
+	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
+func DecodeBodyAva3(r io.Reader) (*protosava.GetAllRequest, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosava.GetAllRequest
+	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
+func DecodeBodyAva2(r io.Reader) (*protosava.CheckRequest, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosava.CheckRequest
+	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
 func DecodeBodyPorfileadd(string2 string) (*protos.ProfileResponse, error) {
 
 	var rt protos.ProfileResponse
@@ -62,6 +95,17 @@ func DecodeBodyAcc(r io.Reader) (*protosAcc.AccommodationResponse, error) {
 	dec.DisallowUnknownFields()
 
 	var rt protosAcc.AccommodationResponse
+	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
+
+func DecodeBodyRes(r io.Reader) (*protosRes.ReservationResponse, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosRes.ReservationResponse
 	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
 		return nil, err
 	}
