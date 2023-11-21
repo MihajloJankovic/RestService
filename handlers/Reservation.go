@@ -52,6 +52,7 @@ func (h *ReservationHandler) SetReservation(w http.ResponseWriter, r *http.Reque
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
+	//TODO Add call to avaibility service for check if date is avaiable
 	_, err = h.acc.SetReservation(context.Background(), rt)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
