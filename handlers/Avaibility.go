@@ -87,7 +87,7 @@ func (h *AvabilityHendler) CheckAvaibility(w http.ResponseWriter, r *http.Reques
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
-	_, err = h.cc.GetAccommodationCheck(context.Background(), rt)
+	resp, err := h.cc.GetAccommodationCheck(context.Background(), rt)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -98,10 +98,7 @@ func (h *AvabilityHendler) CheckAvaibility(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	_, err = w.Write([]byte("Its available"))
-	if err != nil {
-		return
-	}
+	RenderJSON(w, resp)
 
 }
 func (h *AvabilityHendler) GetAllbyId(w http.ResponseWriter, r *http.Request) {
