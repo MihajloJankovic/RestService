@@ -58,7 +58,10 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	out2.Lastname = rt.Lastname
 	out2.Birthday = rt.Birthday
 	out2.Gender = rt.Gender
-	out2.Role = "Guest"
+	if rt.Role != "Guest" && rt.Role != "Host" {
+		rt.Role = "Guest"
+	}
+	out2.Role = rt.Role
 	payload, err := ToJSON(out2)
 	val := h.hh.SetProfile(w, payload)
 	if val == false {
