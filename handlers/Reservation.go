@@ -116,7 +116,16 @@ func (h *ReservationHandler) GetAllReservation(w http.ResponseWriter, r *http.Re
 	w.WriteHeader(http.StatusOK)
 	RenderJSON(w, response.Dummy)
 }
-
+func (h *ReservationHandler) DeleteByAccomndation(accid string) error {
+	req := new(protosRes.DeleteRequest)
+	req.Uid = accid
+	_, err := h.acc.DeleteByAccomnendation(context.Background(), req)
+	if err != nil {
+		log.Printf("RPC failed: %v\n", err)
+		return err
+	}
+	return nil
+}
 func (h *ReservationHandler) UpdateReservation(w http.ResponseWriter, r *http.Request) {
 
 	contentType := r.Header.Get("Content-Type")

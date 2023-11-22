@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"errors"
+	protosava "github.com/MihajloJankovic/Aviability-Service/protos/main"
 	"log"
 	"mime"
 	"net/http"
@@ -138,4 +139,15 @@ func (h *AvabilityHendler) GetAllbyId(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	RenderJSON(w, s)
 
+}
+func (h *AvabilityHendler) DeleteByAccomndation(accid string) error {
+	req := new(protosava.DeleteRequest)
+	req.Uid = accid
+	//this is deleted by accomndation uid
+	_, err := h.cc.DeleteByUser(context.Background(), req)
+	if err != nil {
+		log.Printf("RPC failed: %v\n", err)
+		return err
+	}
+	return nil
 }
