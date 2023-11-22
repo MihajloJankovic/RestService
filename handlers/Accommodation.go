@@ -76,11 +76,6 @@ func (h *AccommodationHandler) GetOneAccommodation(w http.ResponseWriter, r *htt
 		return
 	}
 	re := res
-	if re.GetRole() != "Host" {
-		err := errors.New("you are not host")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
 	if re.GetEmail() != "" {
 		err := errors.New("authorization error")
 		http.Error(w, err.Error(), http.StatusForbidden)
@@ -137,12 +132,6 @@ func (h *AccommodationHandler) GetAllAccommodation(w http.ResponseWriter, r *htt
 	res := ValidateJwt(r, h.hh)
 	if res == nil {
 		err := errors.New("jwt error")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
-	re := res
-	if re.GetRole() != "Host" {
-		err := errors.New("you are not host")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
@@ -215,8 +204,8 @@ func (h *AccommodationHandler) UpdateAccommodation(w http.ResponseWriter, r *htt
 
 func (h *AccommodationHandler) FilterByPriceRange(w http.ResponseWriter, r *http.Request) {
 	// Uzmi parametre iz query stringa
-	minPriceStr := r.URL.Query().Get("min_price")
-	maxPriceStr := r.URL.Query().Get("max_price")
+	minPriceStr := mux.Vars(r)["min_price"]
+	maxPriceStr := mux.Vars(r)["max_price"]
 
 	// Konvertuj stringove u float64
 	minPrice, err := strconv.ParseFloat(minPriceStr, 64)

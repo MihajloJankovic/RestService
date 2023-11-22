@@ -70,6 +70,7 @@ func (h *ReservationHandler) GetReservation(w http.ResponseWriter, r *http.Reque
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
+	re := res
 	response, err := h.acc.GetReservation(context.Background(), ee)
 	if err != nil || response == nil {
 		log.Printf("RPC failed: %v\n", err)
@@ -78,6 +79,11 @@ func (h *ReservationHandler) GetReservation(w http.ResponseWriter, r *http.Reque
 		if err != nil {
 			return
 		}
+		return
+	}
+	if re.GetEmail() != response.GetDummy()[0].GetEmail() {
+		err := errors.New("authorization error")
+		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
 	w.WriteHeader(http.StatusOK)

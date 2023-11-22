@@ -24,9 +24,6 @@ func NewPorfilehendler(l *log.Logger, cc protos.ProfileClient) *Porfilehendler {
 func (h *Porfilehendler) SetProfile(w http.ResponseWriter, sg string) bool {
 
 	rt, err := DecodeBodyPorfileadd(sg)
-	if !(rt.GetRole() == "Guest" || rt.GetRole() == "Host") {
-		rt.Role = "Guest"
-	}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusAccepted)
 		return false
