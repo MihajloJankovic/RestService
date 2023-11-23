@@ -1,11 +1,13 @@
 github.com/MihajloJankovic/Auth-Service v0.0.0-20231120000148-909cfa6b9134 h1:sy7Ys9SlacGSSA0hP2pBuUZUMlwaQ5a1MIaDCdxAasc=
 github.com/MihajloJankovic/Auth-Service v0.0.0-20231120000148-909cfa6b9134/go.mod h1:cvz+PKnFuVg/icLpe/Q8r3MpZ0/Uw+Rggt/lLeTCYgo=
-github.com/MihajloJankovic/Aviability-Service v0.0.0-20231122112301-8d59a5abddce h1:PkQK8FEr5Qg/0t6fgq36LA24lqWurCxNiuURxEB3ayM=
-github.com/MihajloJankovic/Aviability-Service v0.0.0-20231122112301-8d59a5abddce/go.mod h1:IqH3EiPbta9EJjFQMKV8nei+MpZMLK3pXmeARg2Vkw4=
+github.com/MihajloJankovic/Auth-Service v0.0.0-20231123172441-8baa99508608 h1:7KEjIRJMTxRRP79ZvlHh8T8mcNHEtVIV4hBNatY3JgQ=
+github.com/MihajloJankovic/Auth-Service v0.0.0-20231123172441-8baa99508608/go.mod h1:cvz+PKnFuVg/icLpe/Q8r3MpZ0/Uw+Rggt/lLeTCYgo=
 github.com/MihajloJankovic/Aviability-Service v0.0.0-20231122150325-fe333cafa758 h1:1XS1Q4l+iPwJfNJ+35PzCNMdKrguQmLKpYArnuWfrFQ=
 github.com/MihajloJankovic/Aviability-Service v0.0.0-20231122150325-fe333cafa758/go.mod h1:IqH3EiPbta9EJjFQMKV8nei+MpZMLK3pXmeARg2Vkw4=
 github.com/MihajloJankovic/accommodation-service v0.0.0-20231119235309-d9a17caa5d1b h1:as7AXV8hFVozpE7I8fDTDsj3l2vtVk4lY7EuvttQGaA=
 github.com/MihajloJankovic/accommodation-service v0.0.0-20231119235309-d9a17caa5d1b/go.mod h1:h/nzYrtazAGe4iWHB2SmMNO1LKMGU9tpNFKffsfx38g=
+github.com/MihajloJankovic/accommodation-service v0.0.0-20231123150512-6e90e3c889a2 h1:kf0QkujigsMcdocJ8z1rShRMrwn+c3OIdYQqi785J84=
+github.com/MihajloJankovic/accommodation-service v0.0.0-20231123150512-6e90e3c889a2/go.mod h1:h/nzYrtazAGe4iWHB2SmMNO1LKMGU9tpNFKffsfx38g=
 github.com/MihajloJankovic/profile-service v0.0.0-20231120000531-c8254db2a255 h1:dlDEKiLyJwgFThhWrx2O3iUy/4nuD1f4NIyTnNtkMZo=
 github.com/MihajloJankovic/profile-service v0.0.0-20231120000531-c8254db2a255/go.mod h1:iFw+fWt+Jko84FyVPpDiD4EUF9ZozT0lnMoTlEyYNfM=
 github.com/MihajloJankovic/reservation-service v0.0.0-20231122113822-ae6bdc6a8f2a h1:n1fbNbwM7w7/4N8leZVy9+3bL/zkoBOIzbwdNZ49fAU=
@@ -88,3 +90,7 @@ google.golang.org/protobuf v1.26.0-rc.1/go.mod h1:jlhhOSvTdKEhbULTjvd4ARK9grFBp0
 google.golang.org/protobuf v1.26.0/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
 google.golang.org/protobuf v1.31.0 h1:g0LDEJHgrBl9N9r17Ru3sqWhkIx2NB67okBHPwC7hs8=
 google.golang.org/protobuf v1.31.0/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
+gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc h1:2gGKlE2+asNV9m7xrywl36YYNnBG5ZQ0r/BOOxqPpmk=
+gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc/go.mod h1:m7x9LTH6d71AHyAX77c9yqWCCa3UKHcVEj9y7hAtKDk=
+gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df h1:n7WqCuqOuCbNr617RXOY0AWRXxgwEyPp2z+p0+hgMuE=
+gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df/go.mod h1:LRQQ+SO6ZHR7tOkpBDuZnXENFzX8qRjMDMyPD6BRkCw=

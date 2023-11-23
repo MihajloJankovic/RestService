@@ -63,16 +63,17 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 	out2.Role = rt.Role
 	payload, err := ToJSON(out2)
+
 	val := h.hh.SetProfile(w, payload)
 	if val == false {
 		w.WriteHeader(http.StatusBadRequest)
-		RenderJSON(w, "couldn't create user,some service is not available'")
+		RenderJSON(w, "couldn't create user,something went wrong'")
 	} else {
-		_, err := h.cc.Register(context.Background(), out)
+		_, err = h.cc.Register(context.Background(), out)
 		if err != nil {
 			log.Printf("RPC failed: %v\n", err)
 			w.WriteHeader(http.StatusBadRequest)
-			_, err := w.Write([]byte("Registration failed"))
+			_, err := w.Write([]byte(err.Error()))
 			if err != nil {
 				return
 			}

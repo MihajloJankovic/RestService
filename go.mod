@@ -3,9 +3,9 @@ module github.com/MihajloJankovic/RestService
 go 1.21.3
 
 require (
-	github.com/MihajloJankovic/Auth-Service v0.0.0-20231120000148-909cfa6b9134
+	github.com/MihajloJankovic/Auth-Service v0.0.0-20231123172441-8baa99508608
 	github.com/MihajloJankovic/Aviability-Service v0.0.0-20231122150325-fe333cafa758
-	github.com/MihajloJankovic/accommodation-service v0.0.0-20231119235309-d9a17caa5d1b
+	github.com/MihajloJankovic/accommodation-service v0.0.0-20231123150512-6e90e3c889a2
 	github.com/MihajloJankovic/profile-service v0.0.0-20231120000531-c8254db2a255
 	github.com/MihajloJankovic/reservation-service v0.0.0-20231122113822-ae6bdc6a8f2a
 	github.com/golang-jwt/jwt/v5 v5.1.0
@@ -31,4 +31,6 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231120223509-83a465c0220f // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
+	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
+	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
 )
