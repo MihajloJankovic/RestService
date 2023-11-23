@@ -141,7 +141,7 @@ func (h *AvabilityHendler) GetAllbyId(w http.ResponseWriter, r *http.Request) {
 
 }
 func (h *AvabilityHendler) DeleteByAccomndation(accid string) error {
-	req := new(protosava.DeleteRequest)
+	req := new(protosava.DeleteRequestb)
 	req.Uid = accid
 	//this is deleted by accomndation uid
 	_, err := h.cc.DeleteByUser(context.Background(), req)
