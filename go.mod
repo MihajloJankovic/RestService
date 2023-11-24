@@ -3,7 +3,7 @@ module github.com/MihajloJankovic/RestService
 go 1.21.3
 
 require (
-	github.com/MihajloJankovic/Auth-Service v0.0.0-20231123172441-8baa99508608
+  github.com/MihajloJankovic/Auth-Service v0.0.0-20231124032639-3f2763f11da7
 	github.com/MihajloJankovic/Aviability-Service v0.0.0-20231122150325-fe333cafa758
 	github.com/MihajloJankovic/accommodation-service v0.0.0-20231123150512-6e90e3c889a2
 	github.com/MihajloJankovic/profile-service v0.0.0-20231120000531-c8254db2a255

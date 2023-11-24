@@ -3,6 +3,13 @@ package main
 import (
 	"context"
 	"errors"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
 	protosava "github.com/MihajloJankovic/Aviability-Service/protos/main"
 	"github.com/MihajloJankovic/RestService/handlers"
@@ -12,12 +19,6 @@ import (
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"log"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 func main() {
@@ -109,6 +110,8 @@ func main() {
 	router.HandleFunc("/getTicket/{email}", hhAuth.GetTicket).Methods("GET")
 	router.HandleFunc("/activate/{email}/{ticket}", hhAuth.Activate).Methods("GET")
 	router.HandleFunc("/change-password", hhAuth.ChangePassword).Methods("POST")
+	router.HandleFunc("/request-reset", hhAuth.RequestPasswordReset).Methods("POST")
+	router.HandleFunc("/reset", hhAuth.ResetPassword).Methods("POST")
 	//avaibility
 	router.HandleFunc("/set-avaibility", hhava.SetAvability).Methods("POST")
 	router.HandleFunc("/get-all-avaibility", hhava.GetAllbyId).Methods("POST")
