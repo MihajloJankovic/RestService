@@ -184,3 +184,63 @@ func (h *AuthHandler) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	RenderJSON(w, "Password changed successfully!")
 
 }
+
+func (h *AuthHandler) RequestPasswordReset(w http.ResponseWriter, r *http.Request) {
+	contentType := r.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		err := errors.New("expect application/json Content-Type")
+		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
+		return
+	}
+	rt, err := DecodeBodyAuth(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusAccepted)
+		return
+	}
+
+	_, err = h.cc.RequestPasswordReset(context.Background(), &protosAuth.AuthGet{Email: rt.Email})
+	if err != nil {
+		log.Println("RPC failed: ", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to request password reset"))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	RenderJSON(w, "Password reset requested successfully")
+}
+
+func (h *AuthHandler) ResetPassword(w http.ResponseWriter, r *http.Request) {
+	contentType := r.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		err := errors.New("expect application/json Content-Type")
+		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
+		return
+	}
+	rt, err := DecodeBodyReset(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusAccepted)
+		return
+	}
+
+	_, err = h.cc.ResetPassword(context.Background(), rt)
+	if err != nil {
+		log.Println("RPC failed: ", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to reset password"))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	RenderJSON(w, "Password reset successfully")
+}

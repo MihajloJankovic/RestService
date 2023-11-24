@@ -4,15 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"time"
+
 	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
 	protosava "github.com/MihajloJankovic/Aviability-Service/protos/main"
 	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/main"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	protosRes "github.com/MihajloJankovic/reservation-service/protos/genfiles"
 	"github.com/golang-jwt/jwt/v5"
-	"io"
-	"net/http"
-	"time"
 )
 
 func StreamToByte(stream io.Reader) []byte {
@@ -194,4 +195,14 @@ func ValidateJwt(r *http.Request, h *Porfilehendler) *protos.ProfileResponse {
 		return nil
 	}
 	return rt
+}
+func DecodeBodyReset(r io.Reader) (*protosAuth.ResetRequest, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosAuth.ResetRequest
+	if err := dec.Decode(&rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
 }
