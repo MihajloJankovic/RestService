@@ -25,6 +25,7 @@ type RequestRegister struct {
 	Gender    bool
 	Role      string
 	Password  string
+	Username  string
 }
 
 func NewAuthHandler(l *log.Logger, cc protosAuth.AuthClient, hb *Porfilehendler) *AuthHandler {
@@ -58,6 +59,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	out2.Lastname = rt.Lastname
 	out2.Birthday = rt.Birthday
 	out2.Gender = rt.Gender
+	out2.Username = rt.Username
 	if rt.Role != "Guest" && rt.Role != "Host" {
 		rt.Role = "Guest"
 	}
