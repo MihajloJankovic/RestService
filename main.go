@@ -16,6 +16,7 @@ import (
 	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/main"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	protosRes "github.com/MihajloJankovic/reservation-service/protos/genfiles"
+	habb "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -117,7 +118,15 @@ func main() {
 	router.HandleFunc("/get-all-avaibility", hhava.GetAllbyId).Methods("POST")
 	router.HandleFunc("/check-avaibility", hhava.CheckAvaibility).Methods("POST")
 
-	srv := &http.Server{Addr: ":9090", Handler: router}
+	headersOk := habb.AllowedHeaders([]string{"Content-Type", "Authorization"})
+	originsOk := habb.AllowedOrigins([]string{"http://localhost:4200"}) // Replace with your frontend origin
+	methodsOk := habb.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+
+	// Use the CORS middleware
+	corsRouter := habb.CORS(originsOk, headersOk, methodsOk)(router)
+
+	// Start the server
+	srv := &http.Server{Addr: ":9090", Handler: corsRouter}
 	go func() {
 		log.Println("server starting")
 		if err := srv.ListenAndServe(); err != nil {
