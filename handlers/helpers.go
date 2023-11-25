@@ -24,7 +24,7 @@ func StreamToByte(stream io.Reader) []byte {
 	}
 	return buf.Bytes()
 }
-func GenerateJwt(w http.ResponseWriter, email string) {
+func GenerateJwt(w http.ResponseWriter, email string) string {
 	// Create a new token object, specifying signing method and the claims
 	// you would like it to contain.
 	ttl := 600 * time.Second
@@ -40,7 +40,7 @@ func GenerateJwt(w http.ResponseWriter, email string) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	w.Write([]byte(tokenString))
+	return tokenString
 }
 func DecodeBody(r io.Reader) (*protos.ProfileResponse, error) {
 	dec := json.NewDecoder(r)

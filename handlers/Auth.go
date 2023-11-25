@@ -113,9 +113,10 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	GenerateJwt(w, rt.GetEmail())
+	jwt := GenerateJwt(w, rt.GetEmail())
 	w.WriteHeader(http.StatusOK)
 	// adds token to request header
+	RenderJSON(w, jwt)
 }
 
 func (h *AuthHandler) GetTicket(w http.ResponseWriter, r *http.Request) {
