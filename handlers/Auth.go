@@ -103,7 +103,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusAccepted)
 		return
 	}
-	response, err := h.cc.Login(context.Background(), rt)
+	_, err = h.cc.Login(context.Background(), rt)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
 		w.WriteHeader(http.StatusUnauthorized)
@@ -116,7 +116,6 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	GenerateJwt(w, rt.GetEmail())
 	w.WriteHeader(http.StatusOK)
 	// adds token to request header
-	RenderJSON(w, response)
 }
 
 func (h *AuthHandler) GetTicket(w http.ResponseWriter, r *http.Request) {

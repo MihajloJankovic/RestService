@@ -40,7 +40,7 @@ func GenerateJwt(w http.ResponseWriter, email string) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	w.Header().Set("jwt", tokenString)
+	w.Write([]byte(tokenString))
 }
 func DecodeBody(r io.Reader) (*protos.ProfileResponse, error) {
 	dec := json.NewDecoder(r)
