@@ -100,11 +100,12 @@ func main() {
 	router.HandleFunc("/accommodations", acch.GetAllAccommodation).Methods("GET")
 	router.HandleFunc("/add-accommodation", acch.SetAccommodation).Methods("POST")
 	router.HandleFunc("/update-accommodation", acch.UpdateAccommodation).Methods("POST")
+	//router.HandleFunc("/delete-accommodation/{id}", acch.DeleteAccommodation).Methods("DELETE")
 	//reservation
 	router.HandleFunc("/reservation/{id}", resh.GetReservation).Methods("GET")
 	router.HandleFunc("/reservations", resh.GetAllReservation).Methods("GET")
-	router.HandleFunc("/set-accommodation", resh.SetReservation).Methods("POST")
-	router.HandleFunc("/update-accommodation", resh.UpdateReservation).Methods("POST")
+	router.HandleFunc("/set-reservation", resh.SetReservation).Methods("POST")
+	router.HandleFunc("/update-reservation", resh.UpdateReservation).Methods("POST")
 	//auth
 	router.HandleFunc("/register", hhAuth.Register).Methods("POST")
 	router.HandleFunc("/login", hhAuth.Login).Methods("POST")

@@ -125,3 +125,12 @@ func (h *Porfilehendler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+func (h *Porfilehendler) DeleteProfile(email string) error {
+
+	_, err := h.cc.DeleteProfile(context.Background(), &protos.ProfileRequest{Email: email})
+	if err != nil {
+		log.Printf("RPC failed: %v\n", err)
+		return err
+	}
+	return nil
+}

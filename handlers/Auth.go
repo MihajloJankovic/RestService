@@ -3,19 +3,21 @@ package handlers
 import (
 	"context"
 	"errors"
-	"log"
-	"mime"
-	"net/http"
-
 	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	"github.com/gorilla/mux"
+	"log"
+	"mime"
+	"net/http"
 )
 
 type AuthHandler struct {
-	l  *log.Logger
-	cc protosAuth.AuthClient
-	hh *Porfilehendler
+	l    *log.Logger
+	cc   protosAuth.AuthClient
+	hh   *Porfilehendler
+	resh *ReservationHandler
+	acch *AccommodationHandler
+	avah *AvabilityHendler
 }
 type RequestRegister struct {
 	Email     string
@@ -28,8 +30,8 @@ type RequestRegister struct {
 	Username  string
 }
 
-func NewAuthHandler(l *log.Logger, cc protosAuth.AuthClient, hb *Porfilehendler) *AuthHandler {
-	return &AuthHandler{l, cc, hb}
+func NewAuthHandler(l *log.Logger, cc protosAuth.AuthClient, hb *Porfilehendler, resh *ReservationHandler, acch *AccommodationHandler, avah *AvabilityHendler) *AuthHandler {
+	return &AuthHandler{l, cc, hb, resh, acch, avah}
 
 }
 
@@ -187,6 +189,15 @@ func (h *AuthHandler) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	RenderJSON(w, "Password changed successfully!")
 
 }
+func (h *AuthHandler) DeleteReservation(accid string) error {
+
+	err := h.resh.DeleteByAccomndation(accid)
+	if err != nil {
+		log.Printf("RPC failed: %v\n", err)
+		return err
+	}
+	return nil
+}
 
 func (h *AuthHandler) RequestPasswordReset(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Content-Type")
@@ -217,7 +228,75 @@ func (h *AuthHandler) RequestPasswordReset(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 	RenderJSON(w, "Password reset requested successfully")
 }
+func (h *AuthHandler) DeleteHost(w http.ResponseWriter, r *http.Request) {
+	email := mux.Vars(r)["email"]
+	user, err := h.hh.GetProfileInner(email)
+	if err != nil {
+		log.Printf("RPC failed: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Couldn't delete host"))
 
+		return
+	}
+	if user.GetRole() != "Host" {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("You are not a host"))
+
+		return
+	}
+	res := ValidateJwt(r, h.hh)
+	if res == nil {
+		err := errors.New("jwt error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	re := res
+	if re.GetEmail() != email {
+		err := errors.New("authorization error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	accommodations, err := h.acch.GetAccommodationByEmail(email)
+	for _, acc := range accommodations.Dummy {
+		//TODO Reservation check if accommodation has active reservation dateFrom > currentDate < dateTo
+	}
+	for _, acc := range accommodations.Dummy {
+		err := h.resh.DeleteByAccomndation(acc.GetUid())
+		if err != nil {
+			log.Printf("RPC failed: %v\n", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = w.Write([]byte("Couldn't delete host"))
+
+			return
+		}
+		err = h.avah.DeleteByAccomndation(acc.GetUid())
+		if err != nil {
+			log.Printf("RPC failed: %v\n", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = w.Write([]byte("Availability service unavaible"))
+
+			return
+		}
+	}
+	//TODO Add delete method for profile auth service
+}
+func (h *AuthHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
+	email := mux.Vars(r)["email"]
+	// TODO Check if the user had any reservations active and delete if he doesn't have any
+	err := h.hh.DeleteProfile(email)
+	if err != nil {
+		log.Printf("RPC failed: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_, err := w.Write([]byte("Couldn't delete account"))
+		if err != nil {
+			return
+		}
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	RenderJSON(w, "Account deleted successfully")
+}
 func (h *AuthHandler) ResetPassword(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Content-Type")
 	mediatype, _, err := mime.ParseMediaType(contentType)
