@@ -314,7 +314,7 @@ func (h *AuthHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Couldn't delete host"))
+		_, _ = w.Write([]byte("Couldn't delete guest"))
 
 		return
 	}
@@ -336,7 +336,9 @@ func (h *AuthHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
+
 	// TODO Check if the user had any reservations active and delete if he doesn't have any KOPI PASTA SAMO EMAIL UMESTO ACCIDA OD HOSTA, CHECKACTIVERESERVATION(EMAIL)
+
 	err = h.hh.DeleteProfile(email)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
