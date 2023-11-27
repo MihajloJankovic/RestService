@@ -56,13 +56,6 @@ func main() {
 
 		}
 	}(connRes)
-	resc := protosRes.NewReservationClient(connRes)
-	cc := protos.NewProfileClient(conn)
-	acc := protosAcc.NewAccommodationClient(connAcc)
-	hh := handlers.NewPorfilehendler(l, cc)
-	acch := handlers.NewAccommodationHandler(l, acc, hh)
-	resh := handlers.NewReservationHandler(l, resc, hh)
-
 	connAuth, err := grpc.Dial("auth-service:9094", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
@@ -73,7 +66,6 @@ func main() {
 			log.Println(err)
 		}
 	}(conn)
-
 	ccAuth := protosAuth.NewAuthClient(connAuth)
 
 	connAva, err := grpc.Dial("avaibility-service:9095", grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -86,10 +78,18 @@ func main() {
 			log.Println(err)
 		}
 	}(conn)
+
 	la := log.New(os.Stdout, "standard-avaibility-api", log.LstdFlags)
 	ccava := protosava.NewAccommodationAviabilityClient(connAva)
+	resc := protosRes.NewReservationClient(connRes)
+	cc := protos.NewProfileClient(conn)
+	acc := protosAcc.NewAccommodationClient(connAcc)
+	hh := handlers.NewPorfilehendler(l, cc)
+	acch := handlers.NewAccommodationHandler(l, acc, hh)
 	hhava := handlers.NewAvabilityHendler(la, ccava, acc, hh)
+	resh := handlers.NewReservationHandler(l, resc, hh, hhava)
 	hhAuth := handlers.NewAuthHandler(l, ccAuth, hh, resh, acch, hhava)
+
 	router := mux.NewRouter()
 	router.StrictSlash(true)
 	//profile
@@ -118,7 +118,8 @@ func main() {
 	//avaibility
 	router.HandleFunc("/set-avaibility", hhava.SetAvability).Methods("POST")
 	router.HandleFunc("/get-all-avaibility", hhava.GetAllbyId).Methods("POST")
-	router.HandleFunc("/check-avaibility", hhava.CheckAvaibility).Methods("POST")
+	//router.HandleFunc("/check-avaibility", hhava.CheckAvaibility).Methods("POST")
+	//TODO @MIHAJLO trace back to error root :D
 
 	headersOk := habb.AllowedHeaders([]string{"Content-Type", "jwt", "Authorization"})
 	originsOk := habb.AllowedOrigins([]string{"http://localhost:4200"}) // Replace with your frontend origin
