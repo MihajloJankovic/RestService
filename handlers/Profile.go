@@ -113,14 +113,14 @@ func (h *Porfilehendler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)
-		_, err := w.Write([]byte("Couldn't update profile"))
+		_, err := w.Write([]byte("couldn't update profile"))
 		if err != nil {
 			return
 		}
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	_, err = w.Write([]byte("Successfully update profile"))
+	_, err = w.Write([]byte("successfully update profile"))
 	if err != nil {
 		return
 	}

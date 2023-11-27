@@ -259,6 +259,7 @@ func (h *AuthHandler) DeleteHost(w http.ResponseWriter, r *http.Request) {
 	accommodations, err := h.acch.GetAccommodationByEmail(email)
 	for _, acc := range accommodations.Dummy {
 		//TODO Reservation check if accommodation has active reservation dateFrom > currentDate < dateTo
+		println(acc)
 	}
 	for _, acc := range accommodations.Dummy {
 		err := h.resh.DeleteByAccomndation(acc.GetUid())

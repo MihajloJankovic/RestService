@@ -75,7 +75,7 @@ func main() {
 	}(conn)
 
 	ccAuth := protosAuth.NewAuthClient(connAuth)
-	hhAuth := handlers.NewAuthHandler(l, ccAuth, hh)
+
 	connAva, err := grpc.Dial("avaibility-service:9095", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
@@ -89,7 +89,7 @@ func main() {
 	la := log.New(os.Stdout, "standard-avaibility-api", log.LstdFlags)
 	ccava := protosava.NewAccommodationAviabilityClient(connAva)
 	hhava := handlers.NewAvabilityHendler(la, ccava, acc, hh)
-
+	hhAuth := handlers.NewAuthHandler(l, ccAuth, hh, resh, acch, hhava)
 	router := mux.NewRouter()
 	router.StrictSlash(true)
 	//profile
@@ -118,7 +118,6 @@ func main() {
 	router.HandleFunc("/set-avaibility", hhava.SetAvability).Methods("POST")
 	router.HandleFunc("/get-all-avaibility", hhava.GetAllbyId).Methods("POST")
 	router.HandleFunc("/check-avaibility", hhava.CheckAvaibility).Methods("POST")
-	router.HandleFunc("/check-avaibility", *hhava.DeleteByAccomndation).Methods("POST")
 
 	headersOk := habb.AllowedHeaders([]string{"Content-Type", "jwt", "Authorization"})
 	originsOk := habb.AllowedOrigins([]string{"http://localhost:4200"}) // Replace with your frontend origin

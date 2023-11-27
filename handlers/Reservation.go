@@ -117,7 +117,7 @@ func (h *ReservationHandler) GetAllReservation(w http.ResponseWriter, r *http.Re
 	RenderJSON(w, response.Dummy)
 }
 func (h *ReservationHandler) DeleteByAccomndation(accid string) error {
-	req := new(protosRes.DeleteRequest)
+	req := new(protosRes.DeleteRequestaa)
 	req.Uid = accid
 	_, err := h.acc.DeleteByAccomnendation(context.Background(), req)
 	if err != nil {
