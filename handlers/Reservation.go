@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	protosRes "github.com/MihajloJankovic/reservation-service/protos/genfiles"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"hash/fnv"
 	"log"
 	"mime"
 	"net/http"
@@ -53,6 +55,9 @@ func (h *ReservationHandler) SetReservation(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	//TODO Add call to availability service for check if date is available
+	hash := fnv.New32a()
+	hash.Write([]byte((uuid.New()).String()))
+	rt.Id = int32(hash.Sum32())
 	_, err = h.acc.SetReservation(context.Background(), rt)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)

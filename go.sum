@@ -6,6 +6,8 @@ github.com/MihajloJankovic/accommodation-service v0.0.0-20231125224936-ea238545b
 github.com/MihajloJankovic/accommodation-service v0.0.0-20231125224936-ea238545bbe8/go.mod h1:h/nzYrtazAGe4iWHB2SmMNO1LKMGU9tpNFKffsfx38g=
 github.com/MihajloJankovic/profile-service v0.0.0-20231126130138-b96978c1cfe2 h1:cjmN1lrw3ZD5zDKhPXyNZjfgAY2976Fkf5TNsIIPs2U=
 github.com/MihajloJankovic/profile-service v0.0.0-20231126130138-b96978c1cfe2/go.mod h1:iFw+fWt+Jko84FyVPpDiD4EUF9ZozT0lnMoTlEyYNfM=
+github.com/MihajloJankovic/profile-service v0.0.0-20231127084753-73451cdb3681 h1:kL/8WyX4JvviFY+OzsWPevLDRE4TSkFa1z9lrhwKA30=
+github.com/MihajloJankovic/profile-service v0.0.0-20231127084753-73451cdb3681/go.mod h1:iFw+fWt+Jko84FyVPpDiD4EUF9ZozT0lnMoTlEyYNfM=
 github.com/MihajloJankovic/reservation-service v0.0.0-20231127053130-66295b43425b h1:YKEsLQGbp15R89WlfJOKHFhF0hTrKYy8t1uqnK0Q9UU=
 github.com/MihajloJankovic/reservation-service v0.0.0-20231127053130-66295b43425b/go.mod h1:yQyxEWv8Z7+A7AIha3NZbDZXcUQ98G1I+Sz5cMn6ne0=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

@@ -6,7 +6,7 @@ require (
 	github.com/MihajloJankovic/Auth-Service v0.0.0-20231126115726-a5071f6f1cb9
 	github.com/MihajloJankovic/Aviability-Service v0.0.0-20231122150325-fe333cafa758
 	github.com/MihajloJankovic/accommodation-service v0.0.0-20231125224936-ea238545bbe8
-	github.com/MihajloJankovic/profile-service v0.0.0-20231126130138-b96978c1cfe2
+	github.com/MihajloJankovic/profile-service v0.0.0-20231127084753-73451cdb3681
 	github.com/MihajloJankovic/reservation-service v0.0.0-20231127053130-66295b43425b
 	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/google/uuid v1.4.0

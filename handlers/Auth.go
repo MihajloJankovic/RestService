@@ -24,7 +24,7 @@ type RequestRegister struct {
 	Firstname string
 	Lastname  string
 	Birthday  string
-	Gender    bool
+	Gender    string
 	Role      string
 	Password  string
 	Username  string
