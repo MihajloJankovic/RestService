@@ -69,18 +69,7 @@ func (h *AccommodationHandler) GetOneAccommodation(w http.ResponseWriter, r *htt
 	id := mux.Vars(r)["id"]
 	ee := new(protosAcc.AccommodationRequestOne)
 	ee.Id = id
-	res := ValidateJwt(r, h.hh)
-	if res == nil {
-		err := errors.New("jwt error")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
-	re := res
-	if re.GetEmail() != "" {
-		err := errors.New("authorization error")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
+
 	response, err := h.acc.GetOneAccommodation(context.Background(), ee)
 	if err != nil || response == nil {
 		log.Printf("RPC failed: %v\n", err)
