@@ -106,7 +106,7 @@ services:
     image: mongo
     restart: always
     ports:
-      - "27018:27017"
+      - "27011:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: pass
@@ -198,3 +198,4 @@ volumes:
   mongo_accommodations:
   mongo_auths:
   mongo_ava:
+  mongo_reservations:
