@@ -128,6 +128,17 @@ func (h *AccommodationHandler) GetAccommodation(w http.ResponseWriter, r *http.R
 	w.WriteHeader(http.StatusOK)
 	RenderJSON(w, response.Dummy)
 }
+func (h *AccommodationHandler) GetAccommodationByEmail(email string) (*protosAcc.DummyList, error) {
+	ee := new(protosAcc.AccommodationRequest)
+	ee.Email = email
+
+	response, err := h.acc.GetAccommodation(context.Background(), ee)
+	if err != nil || response == nil {
+		log.Printf("RPC failed: %v\n", err)
+		return nil, err
+	}
+	return response, nil
+}
 func (h *AccommodationHandler) GetAllAccommodation(w http.ResponseWriter, r *http.Request) {
 	res := ValidateJwt(r, h.hh)
 	if res == nil {
@@ -200,6 +211,17 @@ func (h *AccommodationHandler) UpdateAccommodation(w http.ResponseWriter, r *htt
 	if err != nil {
 		return
 	}
+}
+
+func (h *AccommodationHandler) DeleteAccommodation(id string) error {
+	req := &protosAcc.DeleteRequest{Uid: id}
+
+	_, err := h.acc.DeleteAccommodation(context.Background(), req)
+	if err != nil {
+		log.Printf("RPC failed: %v\n", err)
+		return err
+	}
+	return nil
 }
 
 func (h *AccommodationHandler) FilterByPriceRange(w http.ResponseWriter, r *http.Request) {

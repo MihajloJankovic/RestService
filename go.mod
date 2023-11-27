@@ -3,10 +3,10 @@ module github.com/MihajloJankovic/RestService
 go 1.21.3
 
 require (
-	github.com/MihajloJankovic/Auth-Service v0.0.0-20231124032639-3f2763f11da7
+	github.com/MihajloJankovic/Auth-Service v0.0.0-20231126115726-a5071f6f1cb9
 	github.com/MihajloJankovic/Aviability-Service v0.0.0-20231122150325-fe333cafa758
-	github.com/MihajloJankovic/accommodation-service v0.0.0-20231123150512-6e90e3c889a2
-	github.com/MihajloJankovic/profile-service v0.0.0-20231124130922-852280e8729b
+	github.com/MihajloJankovic/accommodation-service v0.0.0-20231125224936-ea238545bbe8
+	github.com/MihajloJankovic/profile-service v0.0.0-20231126130138-b96978c1cfe2
 	github.com/MihajloJankovic/reservation-service v0.0.0-20231122113822-ae6bdc6a8f2a
 	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/google/uuid v1.4.0

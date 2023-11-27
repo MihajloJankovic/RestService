@@ -1,11 +1,11 @@
-github.com/MihajloJankovic/Auth-Service v0.0.0-20231124032639-3f2763f11da7 h1:Hx4G62COWOr4fRyjX8r+wOMBMVacKS5TXFnYCm5tf3U=
-github.com/MihajloJankovic/Auth-Service v0.0.0-20231124032639-3f2763f11da7/go.mod h1:cvz+PKnFuVg/icLpe/Q8r3MpZ0/Uw+Rggt/lLeTCYgo=
+github.com/MihajloJankovic/Auth-Service v0.0.0-20231126115726-a5071f6f1cb9 h1:UZI7WW8Ilv0Id8AibJYj1MiNF07JgYzfGfScddI9NGA=
+github.com/MihajloJankovic/Auth-Service v0.0.0-20231126115726-a5071f6f1cb9/go.mod h1:cvz+PKnFuVg/icLpe/Q8r3MpZ0/Uw+Rggt/lLeTCYgo=
 github.com/MihajloJankovic/Aviability-Service v0.0.0-20231122150325-fe333cafa758 h1:1XS1Q4l+iPwJfNJ+35PzCNMdKrguQmLKpYArnuWfrFQ=
 github.com/MihajloJankovic/Aviability-Service v0.0.0-20231122150325-fe333cafa758/go.mod h1:IqH3EiPbta9EJjFQMKV8nei+MpZMLK3pXmeARg2Vkw4=
-github.com/MihajloJankovic/accommodation-service v0.0.0-20231123150512-6e90e3c889a2 h1:kf0QkujigsMcdocJ8z1rShRMrwn+c3OIdYQqi785J84=
-github.com/MihajloJankovic/accommodation-service v0.0.0-20231123150512-6e90e3c889a2/go.mod h1:h/nzYrtazAGe4iWHB2SmMNO1LKMGU9tpNFKffsfx38g=
-github.com/MihajloJankovic/profile-service v0.0.0-20231124130922-852280e8729b h1:kIT/BfQwU2YIoSUa+ImiFNz4wLP9cEV264TKdGtMBNU=
-github.com/MihajloJankovic/profile-service v0.0.0-20231124130922-852280e8729b/go.mod h1:iFw+fWt+Jko84FyVPpDiD4EUF9ZozT0lnMoTlEyYNfM=
+github.com/MihajloJankovic/accommodation-service v0.0.0-20231125224936-ea238545bbe8 h1:CseE9GgHGvSJCRl4YHeESQ5/lp/tklmPWuwVDFceTeA=
+github.com/MihajloJankovic/accommodation-service v0.0.0-20231125224936-ea238545bbe8/go.mod h1:h/nzYrtazAGe4iWHB2SmMNO1LKMGU9tpNFKffsfx38g=
+github.com/MihajloJankovic/profile-service v0.0.0-20231126130138-b96978c1cfe2 h1:cjmN1lrw3ZD5zDKhPXyNZjfgAY2976Fkf5TNsIIPs2U=
+github.com/MihajloJankovic/profile-service v0.0.0-20231126130138-b96978c1cfe2/go.mod h1:iFw+fWt+Jko84FyVPpDiD4EUF9ZozT0lnMoTlEyYNfM=
 github.com/MihajloJankovic/reservation-service v0.0.0-20231122113822-ae6bdc6a8f2a h1:n1fbNbwM7w7/4N8leZVy9+3bL/zkoBOIzbwdNZ49fAU=
 github.com/MihajloJankovic/reservation-service v0.0.0-20231122113822-ae6bdc6a8f2a/go.mod h1:yQyxEWv8Z7+A7AIha3NZbDZXcUQ98G1I+Sz5cMn6ne0=
 github.com/felixge/httpsnoop v1.0.3 h1:s/nj+GCswXYzN5v2DpNMuMQYe+0DDwt5WVCU6CWBdXk=
