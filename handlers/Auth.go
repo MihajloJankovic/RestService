@@ -310,9 +310,34 @@ func (h *AuthHandler) DeleteHost(w http.ResponseWriter, r *http.Request) {
 }
 func (h *AuthHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 	email := mux.Vars(r)["email"]
-	// TODO Check if user is guest
-	// TODO Check if the user had any reservations active and delete if he doesn't have any KOPI PASTA SAMO EMAIL UMESTO ACCIDA
-	err := h.hh.DeleteProfile(email)
+	user, err := h.hh.GetProfileInner(email)
+	if err != nil {
+		log.Printf("RPC failed: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Couldn't delete host"))
+
+		return
+	}
+	if user.GetRole() != "Guest" {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("You are not a guest"))
+
+		return
+	}
+	res := ValidateJwt(r, h.hh)
+	if res == nil {
+		err := errors.New("jwt error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	re := res
+	if re.GetEmail() != email {
+		err := errors.New("authorization error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	// TODO Check if the user had any reservations active and delete if he doesn't have any KOPI PASTA SAMO EMAIL UMESTO ACCIDA OD HOSTA, CHECKACTIVERESERVATION(EMAIL)
+	err = h.hh.DeleteProfile(email)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
