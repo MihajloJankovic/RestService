@@ -82,6 +82,44 @@ services:
     volumes:
       - mongo_accommodations:/data/db
 
+  reservation-service:
+    container_name: reservation-service
+    build: ../reservation-service
+    restart: always
+    ports:
+      - "9096:9096"
+    environment:
+      - PORT=8080
+      # NoSQL: environment variable holding connection URI for Mongo database
+      # protocol://username:password@hostname:port
+      - MONGO_DB_URI=mongodb://root:pass@mongo-reservation:27017
+      # - MONGO_DB_URI=mongodb://mongo:27018
+      # NoSQL: Our service will try to connect to Mongo before it is up
+      # in order to avoid that problem, we specify that it depends on mongo service
+      # which defines the order of starting the containers
+      # Additionaly we specify that mongo service needs to pass a healthcheck
+    depends_on:
+      mongo-accommodation:
+        condition: service_healthy
+  mongo-reservation:
+    container_name: mongo-reservation
+    image: mongo
+    restart: always
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pass
+      MONGO_INITDB_DATABASE: mongoReservation
+    # Docker healtcheck - checks if database is "alive"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok'
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    volumes:
+      - mongo_reservations:/data/db
+
   auth-service:
     container_name: auth-service
     build: ../Auth-Service
