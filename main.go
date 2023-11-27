@@ -117,6 +117,7 @@ func main() {
 	router.HandleFunc("/set-avaibility", hhava.SetAvability).Methods("POST")
 	router.HandleFunc("/get-all-avaibility", hhava.GetAllbyId).Methods("POST")
 	router.HandleFunc("/check-avaibility", hhava.CheckAvaibility).Methods("POST")
+	router.HandleFunc("/check-avaibility", *hhava.DeleteByAccomndation).Methods("POST")
 
 	headersOk := habb.AllowedHeaders([]string{"Content-Type", "jwt", "Authorization"})
 	originsOk := habb.AllowedOrigins([]string{"http://localhost:4200"}) // Replace with your frontend origin
