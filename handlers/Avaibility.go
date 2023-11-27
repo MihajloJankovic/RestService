@@ -64,43 +64,18 @@ func (h *AvabilityHendler) SetAvability(w http.ResponseWriter, r *http.Request) 
 	}
 
 }
-func (h *AvabilityHendler) CheckAvaibility(w http.ResponseWriter, r *http.Request) {
+func (h *AvabilityHendler) CheckAvaibility(accid string, dateFrom string, dateTo string) error {
+	temp := new(protos.CheckRequest)
+	temp.Id = accid
+	temp.From = dateFrom
+	temp.To = dateTo
 
-	contentType := r.Header.Get("Content-Type")
-	mediatype, _, err := mime.ParseMediaType(contentType)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	if mediatype != "application/json" {
-		err := errors.New("expect application/json Content-Type")
-		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
-		return
-	}
-	rt, err := DecodeBodyAva2(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
-	res := ValidateJwt(r, h.pp)
-	if res == nil {
-		err := errors.New("jwt error")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
-	resp, err := h.cc.GetAccommodationCheck(context.Background(), rt)
+	_, err := h.cc.GetAccommodationCheck(context.Background(), temp)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
-		w.WriteHeader(http.StatusBadRequest)
-		_, err := w.Write([]byte("Not available"))
-		if err != nil {
-			return
-		}
-		return
+		return err
 	}
-	w.WriteHeader(http.StatusOK)
-	RenderJSON(w, resp)
-
+	return nil
 }
 func (h *AvabilityHendler) GetAllbyId(w http.ResponseWriter, r *http.Request) {
 

@@ -206,3 +206,13 @@ func DecodeBodyReset(r io.Reader) (*protosAuth.ResetRequest, error) {
 	}
 	return &rt, nil
 }
+
+func getTodaysDateInLocal() string {
+	// Get the current time in the local timezone
+	currentTime := time.Now().Local()
+
+	// Format the date as yyyy-mm-dd
+	formattedDate := currentTime.Format("2006-01-02")
+
+	return formattedDate
+}

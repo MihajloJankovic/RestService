@@ -17,10 +17,11 @@ type ReservationHandler struct {
 	l   *log.Logger
 	acc protosRes.ReservationClient
 	hh  *Porfilehendler
+	ava *AvabilityHendler
 }
 
-func NewReservationHandler(l *log.Logger, acc protosRes.ReservationClient, hb *Porfilehendler) *ReservationHandler {
-	return &ReservationHandler{l, acc, hb}
+func NewReservationHandler(l *log.Logger, acc protosRes.ReservationClient, hb *Porfilehendler, ava *AvabilityHendler) *ReservationHandler {
+	return &ReservationHandler{l, acc, hb, ava}
 
 }
 
@@ -54,7 +55,12 @@ func (h *ReservationHandler) SetReservation(w http.ResponseWriter, r *http.Reque
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
-	//TODO Add call to availability service for check if date is available
+	err = h.ava.CheckAvaibility(rt.Accid, rt.DateFrom, rt.DateTo)
+	if err != nil {
+		log.Printf("RPC failed: %v\n", err)
+		http.Error(w, err.Error(), http.StatusConflict)
+		return
+	}
 	hash := fnv.New32a()
 	hash.Write([]byte((uuid.New()).String()))
 	rt.Id = int32(hash.Sum32())
@@ -93,6 +99,18 @@ func (h *ReservationHandler) GetReservation(w http.ResponseWriter, r *http.Reque
 	}
 	w.WriteHeader(http.StatusOK)
 	RenderJSON(w, response.Dummy)
+}
+func (h *ReservationHandler) CheckActiveReservation(accid string) error {
+	temp := new(protosRes.DateFromDateTo)
+	temp.DateFrom = getTodaysDateInLocal()
+	temp.DateTo = getTodaysDateInLocal()
+	temp.Accid = accid
+	_, err := h.acc.CheckActiveReservation(context.Background(), temp)
+	if err != nil {
+		log.Println("Couldn't delete reservation because it's active")
+		return err
+	}
+	return nil
 }
 func (h *ReservationHandler) GetAllReservation(w http.ResponseWriter, r *http.Request) {
 	res := ValidateJwt(r, h.hh)

@@ -258,8 +258,11 @@ func (h *AuthHandler) DeleteHost(w http.ResponseWriter, r *http.Request) {
 	}
 	accommodations, err := h.acch.GetAccommodationByEmail(email)
 	for _, acc := range accommodations.Dummy {
-		//TODO Reservation check if accommodation has active reservation dateFrom > currentDate < dateTo
-		println(acc)
+		err = h.resh.CheckActiveReservation(acc.GetUid())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusConflict)
+			return
+		}
 	}
 	for _, acc := range accommodations.Dummy {
 		err := h.resh.DeleteByAccomndation(acc.GetUid())
@@ -279,12 +282,19 @@ func (h *AuthHandler) DeleteHost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	//TODO Add delete method for profile auth service
-}
-func (h *AuthHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
-	email := mux.Vars(r)["email"]
-	// TODO Check if the user had any reservations active and delete if he doesn't have any
-	err := h.hh.DeleteProfile(email)
+	err = h.hh.DeleteProfile(email)
+	if err != nil {
+		log.Printf("RPC failed: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_, err := w.Write([]byte("Couldn't delete account"))
+		if err != nil {
+			return
+		}
+		return
+	}
+	temp := new(protosAuth.AuthGet)
+	temp.Email = email
+	_, err = h.cc.Delete(context.Background(), temp)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -298,6 +308,37 @@ func (h *AuthHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	RenderJSON(w, "Account deleted successfully")
 }
+func (h *AuthHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
+	email := mux.Vars(r)["email"]
+	// TODO Check if user is guest
+	// TODO Check if the user had any reservations active and delete if he doesn't have any KOPI PASTA SAMO EMAIL UMESTO ACCIDA
+	err := h.hh.DeleteProfile(email)
+	if err != nil {
+		log.Printf("RPC failed: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_, err := w.Write([]byte("Couldn't delete account"))
+		if err != nil {
+			return
+		}
+		return
+	}
+	temp := new(protosAuth.AuthGet)
+	temp.Email = email
+	_, err = h.cc.Delete(context.Background(), temp)
+	if err != nil {
+		log.Printf("RPC failed: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_, err := w.Write([]byte("Couldn't delete account"))
+		if err != nil {
+			return
+		}
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	RenderJSON(w, "Account deleted successfully")
+}
+
 func (h *AuthHandler) ResetPassword(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Content-Type")
 	mediatype, _, err := mime.ParseMediaType(contentType)
