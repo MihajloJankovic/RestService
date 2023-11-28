@@ -3,11 +3,11 @@ module github.com/MihajloJankovic/RestService
 go 1.21.3
 
 require (
-	github.com/MihajloJankovic/Auth-Service v0.0.0-20231126115726-a5071f6f1cb9
-	github.com/MihajloJankovic/Aviability-Service v0.0.0-20231122150325-fe333cafa758
-	github.com/MihajloJankovic/accommodation-service v0.0.0-20231125224936-ea238545bbe8
-	github.com/MihajloJankovic/profile-service v0.0.0-20231127084753-73451cdb3681
-	github.com/MihajloJankovic/reservation-service v0.0.0-20231127180054-5cd274a051e3
+	github.com/MihajloJankovic/Auth-Service v0.0.0-20231127215414-6a41b98770c3
+	github.com/MihajloJankovic/Aviability-Service v0.0.0-20231127111534-c47e22042a0e
+	github.com/MihajloJankovic/accommodation-service v0.0.0-20231127104105-82a282b76644
+	github.com/MihajloJankovic/profile-service v0.0.0-20231127105818-e26938dd95a8
+	github.com/MihajloJankovic/reservation-service v0.0.0-20231127202407-85dacde41dd9
 	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/google/uuid v1.4.0
 	github.com/gorilla/handlers v1.5.2
@@ -33,4 +33,6 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231120223509-83a465c0220f // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
+	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
+	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
 )
