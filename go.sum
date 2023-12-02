@@ -20,6 +20,8 @@ github.com/MihajloJankovic/reservation-service v0.0.0-20231127180054-5cd274a051e
 github.com/MihajloJankovic/reservation-service v0.0.0-20231127180054-5cd274a051e3/go.mod h1:yQyxEWv8Z7+A7AIha3NZbDZXcUQ98G1I+Sz5cMn6ne0=
 github.com/MihajloJankovic/reservation-service v0.0.0-20231127202407-85dacde41dd9 h1:5m40e7PzU/mgUyjrAFRE21WLDTPwz+4eQm7bM/FQxFY=
 github.com/MihajloJankovic/reservation-service v0.0.0-20231127202407-85dacde41dd9/go.mod h1:yQyxEWv8Z7+A7AIha3NZbDZXcUQ98G1I+Sz5cMn6ne0=
+github.com/MihajloJankovic/reservation-service v0.0.0-20231128014941-194986b9a190 h1:CDB5qBrakA+pyqSpvsAa8uNJPELDzxmYI825qICZUGw=
+github.com/MihajloJankovic/reservation-service v0.0.0-20231128014941-194986b9a190/go.mod h1:yQyxEWv8Z7+A7AIha3NZbDZXcUQ98G1I+Sz5cMn6ne0=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/felixge/httpsnoop v1.0.3 h1:s/nj+GCswXYzN5v2DpNMuMQYe+0DDwt5WVCU6CWBdXk=
 github.com/felixge/httpsnoop v1.0.3/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=

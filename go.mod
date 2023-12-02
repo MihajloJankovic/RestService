@@ -7,7 +7,7 @@ require (
 	github.com/MihajloJankovic/Aviability-Service v0.0.0-20231127111534-c47e22042a0e
 	github.com/MihajloJankovic/accommodation-service v0.0.0-20231127104105-82a282b76644
 	github.com/MihajloJankovic/profile-service v0.0.0-20231127105818-e26938dd95a8
-	github.com/MihajloJankovic/reservation-service v0.0.0-20231127202407-85dacde41dd9
+	github.com/MihajloJankovic/reservation-service v0.0.0-20231128014941-194986b9a190
 	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/google/uuid v1.4.0
 	github.com/gorilla/handlers v1.5.2

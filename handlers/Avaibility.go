@@ -51,17 +51,13 @@ func (h *AvabilityHendler) SetAvability(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)
-		_, err := w.Write([]byte("Couldn't create avability"))
+		_, err := w.Write([]byte("couldn't create avability"))
 		if err != nil {
 			return
 		}
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	_, err = w.Write([]byte("Successfully created"))
-	if err != nil {
-		return
-	}
 
 }
 func (h *AvabilityHendler) CheckAvaibility(accid string, dateFrom string, dateTo string) error {
