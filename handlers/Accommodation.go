@@ -214,7 +214,26 @@ func (h *AccommodationHandler) DeleteAccommodation(id string) error {
 }
 
 func (h *AccommodationHandler) FilterByPriceRange(w http.ResponseWriter, r *http.Request) {
-	// Uzmi parametre iz query stringa
+	//TODO GETALL ACCOMONDATIONS , THEN  check check avability service foreach
+	//TODO accomondation(needs to add that method becuse current method checks only for date avaibility :) ,method shoud return all avaible objets for that
+	//TODO price , so them in foreach add new foreach for avaibility list , and call reservation service checkactivereservation for dates and id of each avaibility
+	//TODO (not user method in reservation ),if retturns error them pop it out of copy of avability list ,na kraju velikog foreacha ne unutrasnjeg ,
+	//TODO proveris da li je ta kopija ava veca od nule ako je veca taj accomondation ostaje u kopiji liste accomondationa ako je nula znaci nema slobodnih
+	//TODO  termina za taj smestaj i cenu i izbaci ga iz kopije liste . i posle foreacha kad prodje kroz sve smestaje vrati smestaje koji su ostali.
+	//accs := h.acc.GetAllAccommodation()
+	//for index, accs := range accs {
+	//	lista_ava := h.ava.GetallbyIDandPrice() //NEEDS TO BE IMPLEMENTED
+	//	//ako je lista prazna izvaci iz kopije liste accomondationa  i preskoci ostatak iteracije fora continue verovatno
+	//
+	//	for _, avab := range lista_ava {
+	//		h.reservation.checkifThereisReservationfordate() //NEEDS TO BE IMPLEMENTED IN SERVICE CURRENCT METHODS DONT DO THE JOB
+	//		if err != nil {
+	//		//	izbaci iz kopije liste lista_ava
+	//		}
+	//	}
+	//		// ako je lista_ava prazna izbaci iz kopije liste accomondationa trnutni smestaj vrv po indexu
+	//}
+	////vrati smestaje koji su ostali
 	minPriceStr := mux.Vars(r)["min_price"]
 	maxPriceStr := mux.Vars(r)["max_price"]
 
