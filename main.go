@@ -101,7 +101,6 @@ func main() {
 	router.HandleFunc("/add-accommodation", acch.SetAccommodation).Methods("POST")
 	router.HandleFunc("/update-accommodation", acch.UpdateAccommodation).Methods("POST")
 	router.HandleFunc("/accomondation-one/{id}", acch.GetOneAccommodation).Methods("GET")
-	//router.HandleFunc("/delete-accommodation/{id}", acch.DeleteAccommodation).Methods("DELETE")
 	//reservation
 	router.HandleFunc("/reservation/{id}", resh.GetReservation).Methods("GET")
 	router.HandleFunc("/reservations", resh.GetAllReservation).Methods("GET")

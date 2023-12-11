@@ -100,6 +100,27 @@ func (h *ReservationHandler) GetReservation(w http.ResponseWriter, r *http.Reque
 	w.WriteHeader(http.StatusOK)
 	RenderJSON(w, response.Dummy)
 }
+func (h *ReservationHandler) CheckActiveReservationByEmail(email string) error {
+	temp := new(protosRes.Emaill)
+	temp.Email = email
+	_, err := h.acc.CheckActiveReservationByEmail(context.Background(), temp)
+	if err != nil {
+		log.Println("Couldn't delete reservation because it's active")
+		return err
+	}
+	return nil
+}
+func (h *ReservationHandler) DeleteReservationByEmail(email string) error {
+	temp := new(protosRes.Emaill)
+	temp.Email = email
+	_, err := h.acc.DeleteReservationByEmail(context.Background(), temp)
+	if err != nil {
+		log.Println("Couldn't delete reservation because it's active")
+		return err
+	}
+	return nil
+}
+
 func (h *ReservationHandler) CheckActiveReservation(accid string) error {
 	temp := new(protosRes.DateFromDateTo)
 	temp.DateFrom = getTodaysDateInLocal()

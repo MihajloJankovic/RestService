@@ -337,7 +337,27 @@ func (h *AuthHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO Check if the user had any reservations active and delete if he doesn't have any KOPI PASTA SAMO EMAIL UMESTO ACCIDA OD HOSTA, CHECKACTIVERESERVATION(EMAIL)
+	err = h.resh.CheckActiveReservationByEmail(email)
+	if err != nil {
+		log.Printf("RPC failed: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_, err := w.Write([]byte("Couldn't delete account"))
+		if err != nil {
+			return
+		}
+		return
+	}
+
+	err = h.resh.DeleteReservationByEmail(email)
+	if err != nil {
+		log.Printf("RPC failed: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_, err := w.Write([]byte("Couldn't delete account"))
+		if err != nil {
+			return
+		}
+		return
+	}
 
 	err = h.hh.DeleteProfile(email)
 	if err != nil {
