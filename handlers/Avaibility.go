@@ -90,12 +90,6 @@ func (h *AvabilityHendler) GetAllbyId(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
-	res := ValidateJwt(r, h.pp)
-	if res == nil {
-		err := errors.New("jwt error")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
 	s, err := h.cc.GetAllforAccomendation(context.Background(), rt)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
