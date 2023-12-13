@@ -216,3 +216,14 @@ func getTodaysDateInLocal() string {
 
 	return formattedDate
 }
+
+func DecodeBodyPriceAndId(r io.Reader) (*protosava.PriceAndIdRequest, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosava.PriceAndIdRequest
+	if err := dec.Decode(&rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}

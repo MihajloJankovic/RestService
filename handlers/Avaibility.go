@@ -3,13 +3,12 @@ package handlers
 import (
 	"context"
 	"errors"
+	protos "github.com/MihajloJankovic/Aviability-Service/protos/main"
 	protosava "github.com/MihajloJankovic/Aviability-Service/protos/main"
+	protosac "github.com/MihajloJankovic/accommodation-service/protos/main"
 	"log"
 	"mime"
 	"net/http"
-
-	protos "github.com/MihajloJankovic/Aviability-Service/protos/main"
-	protosac "github.com/MihajloJankovic/accommodation-service/protos/main"
 )
 
 type AvabilityHendler struct {
@@ -121,4 +120,23 @@ func (h *AvabilityHendler) DeleteByAccomndation(accid string) error {
 		return err
 	}
 	return nil
+}
+
+func (h *AvabilityHendler) GetallbyIDandPrice(id string, minPrice int32, maxPrice int32) ([]*protosava.CheckSet, error) {
+	// Kreiraj PriceAndIdRequest objekat sa prosleđenim vrednostima
+	request := &protosava.PriceAndIdRequest{
+		Id:       id,
+		MinPrice: minPrice,
+		MaxPrice: maxPrice,
+	}
+
+	// Pozovi odgovarajuću metodu iz availability servisa
+	listaAva, err := h.cc.GetallbyIDandPrice(context.Background(), request)
+	if err != nil {
+		// Obradi grešku, loguj je ili vrati odgovarajući error
+		return nil, err
+	}
+
+	// Ako je sve u redu, možeš dalje raditi sa listom dostupnosti ili vratiti korisniku
+	return listaAva.Dummy, nil
 }

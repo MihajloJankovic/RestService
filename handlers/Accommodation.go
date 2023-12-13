@@ -3,23 +3,24 @@ package handlers
 import (
 	"context"
 	"errors"
+	protosava "github.com/MihajloJankovic/Aviability-Service/protos/main"
 	protosAcc "github.com/MihajloJankovic/accommodation-service/protos/main"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"log"
 	"mime"
 	"net/http"
-	"strconv"
 )
 
 type AccommodationHandler struct {
 	l   *log.Logger
 	acc protosAcc.AccommodationClient
 	hh  *Porfilehendler
+	ava *AvabilityHendler
 }
 
-func NewAccommodationHandler(l *log.Logger, acc protosAcc.AccommodationClient, hb *Porfilehendler) *AccommodationHandler {
-	return &AccommodationHandler{l, acc, hb}
+func NewAccommodationHandler(l *log.Logger, acc protosAcc.AccommodationClient, hb *Porfilehendler, ava *AvabilityHendler) *AccommodationHandler {
+	return &AccommodationHandler{l, acc, hb, ava}
 
 }
 
@@ -214,53 +215,58 @@ func (h *AccommodationHandler) DeleteAccommodation(id string) error {
 }
 
 func (h *AccommodationHandler) FilterByPriceRange(w http.ResponseWriter, r *http.Request) {
-	//TODO GETALL ACCOMONDATIONS , THEN  check check avability service foreach
-	//TODO accomondation(needs to add that method becuse current method checks only for date avaibility :) ,method shoud return all avaible objets for that
-	//TODO price , so them in foreach add new foreach for avaibility list , and call reservation service checkactivereservation for dates and id of each avaibility
-	//TODO (not user method in reservation ),if retturns error them pop it out of copy of avability list ,na kraju velikog foreacha ne unutrasnjeg ,
-	//TODO proveris da li je ta kopija ava veca od nule ako je veca taj accomondation ostaje u kopiji liste accomondationa ako je nula znaci nema slobodnih
-	//TODO  termina za taj smestaj i cenu i izbaci ga iz kopije liste . i posle foreacha kad prodje kroz sve smestaje vrati smestaje koji su ostali.
-	//accs := h.acc.GetAllAccommodation()
-	//for index, accs := range accs {
-	//	lista_ava := h.ava.GetallbyIDandPrice() //NEEDS TO BE IMPLEMENTED
-	//	//ako je lista prazna izvaci iz kopije liste accomondationa  i preskoci ostatak iteracije fora continue verovatno
-	//
-	//	for _, avab := range lista_ava {
-	//		h.reservation.checkifThereisReservationfordate() //NEEDS TO BE IMPLEMENTED IN SERVICE CURRENCT METHODS DONT DO THE JOB
-	//		if err != nil {
-	//		//	izbaci iz kopije liste lista_ava
-	//		}
-	//	}
-	//		// ako je lista_ava prazna izbaci iz kopije liste accomondationa trnutni smestaj vrv po indexu
-	//}
-	////vrati smestaje koji su ostali
-	minPriceStr := mux.Vars(r)["min_price"]
-	maxPriceStr := mux.Vars(r)["max_price"]
-
-	// Konvertuj stringove u float64
-	minPrice, err := strconv.ParseFloat(minPriceStr, 64)
+	rt, err := DecodeBodyPriceAndId(r.Body)
 	if err != nil {
-		http.Error(w, "Invalid min_price parameter", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	maxPrice, err := strconv.ParseFloat(maxPriceStr, 64)
+	accs, err := h.acc.GetAllAccommodation(context.Background(), &protosAcc.Emptya{})
 	if err != nil {
-		http.Error(w, "Invalid max_price parameter", http.StatusBadRequest)
+		http.Error(w, "Error getting accommodations", http.StatusInternalServerError)
 		return
 	}
 
-	// Pozovi odgovarajuću metodu na AccommodationClient i obradi rezultat
-	filteredAccommodations, err := h.acc.FilterByPriceRange(context.Background(), &protosAcc.PriceRangeRequest{
-		MinPrice: float32(minPrice),
-		MaxPrice: float32(maxPrice),
-	})
+	var availableAccommodations []*protosAcc.AccommodationResponse
 
-	if err != nil {
-		http.Error(w, "Error filtering accommodations", http.StatusInternalServerError)
-		return
+	for _, acc := range accs.Dummy {
+		// Dohvatanje liste dostupnosti i cena za trenutni smeštaj
+		listaAva, err := h.ava.GetallbyIDandPrice(acc.Uid, rt.MinPrice, rt.MaxPrice)
+		if err != nil {
+			http.Error(w, "Error getting availability list...", http.StatusInternalServerError)
+			return
+		}
+
+		copiedAva := make([]*protosava.CheckSet, len(listaAva))
+		copy(copiedAva, listaAva)
+
+		// Iteracija kroz kopiranu listu dostupnosti
+		for _, avab := range copiedAva {
+			// Provera dostupnosti za svaku stavku dostupnosti
+			err := h.ava.CheckAvaibility(avab.Uid, avab.From, avab.To)
+			if err != nil {
+				// Ako postoji rezervacija, ukloni iz kopirane liste dostupnosti
+				copiedAva = removeAvability(copiedAva, avab)
+			}
+		}
+
+		// Ako je kopirana lista dostupnosti neprazna, smeštaj je dostupan
+		if len(copiedAva) > 0 {
+			availableAccommodations = append(availableAccommodations, acc)
+		}
 	}
 
 	// Konvertuj rezultate u JSON i pošalji klijentu
-	RenderJSON(w, filteredAccommodations.Dummy)
+	RenderJSON(w, availableAccommodations)
+}
+
+func removeAvability(slice []*protosava.CheckSet, item *protosava.CheckSet) []*protosava.CheckSet {
+	var index int
+	for i, v := range slice {
+		if v == item {
+			index = i
+			break
+		}
+	}
+	return append(slice[:index], slice[index+1:]...)
 }

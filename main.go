@@ -85,8 +85,8 @@ func main() {
 	cc := protos.NewProfileClient(conn)
 	acc := protosAcc.NewAccommodationClient(connAcc)
 	hh := handlers.NewPorfilehendler(l, cc)
-	acch := handlers.NewAccommodationHandler(l, acc, hh)
 	hhava := handlers.NewAvabilityHendler(la, ccava, acc, hh)
+	acch := handlers.NewAccommodationHandler(l, acc, hh, hhava)
 	resh := handlers.NewReservationHandler(l, resc, hh, hhava)
 	hhAuth := handlers.NewAuthHandler(l, ccAuth, hh, resh, acch, hhava)
 
