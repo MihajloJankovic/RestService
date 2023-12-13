@@ -129,7 +129,7 @@ func (h *AccommodationHandler) GetAccommodationByEmail(email string) (*protosAcc
 	return response, nil
 }
 func (h *AccommodationHandler) GetAllAccommodation(w http.ResponseWriter, r *http.Request) {
-
+	
 	emptyRequest := new(protosAcc.Emptya)
 	response, err := h.acc.GetAllAccommodation(context.Background(), emptyRequest)
 	if err != nil || response == nil {
