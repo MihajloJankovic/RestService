@@ -67,6 +67,8 @@ func (h *ReservationHandler) SetReservation(w http.ResponseWriter, r *http.Reque
 	_, err = h.acc.SetReservation(context.Background(), rt)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
+		http.Error(w, err.Error(), http.StatusConflict)
+		return
 	}
 	w.WriteHeader(http.StatusCreated)
 }
