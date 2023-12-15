@@ -112,7 +112,16 @@ func DecodeBodyRes(r io.Reader) (*protosRes.ReservationResponse, error) {
 	}
 	return &rt, nil
 }
+func DecodeBodyRes2(r io.Reader) (*protosRes.Emaill, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
 
+	var rt protosRes.Emaill
+	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
 func DecodeBodyAuth(r io.Reader) (*RequestRegister, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()

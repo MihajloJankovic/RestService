@@ -258,9 +258,11 @@ func (h *AuthHandler) DeleteHost(w http.ResponseWriter, r *http.Request) {
 	}
 	accommodations, err := h.acch.GetAccommodationByEmail(email)
 	for _, acc := range accommodations.Dummy {
+		log.Println("accomondation delete check ")
+		log.Println(acc.GetUid())
 		err = h.resh.CheckActiveReservation(acc.GetUid())
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusConflict)
+			http.Error(w, "There is active reservation for your accomondation", http.StatusConflict)
 			return
 		}
 	}
@@ -268,7 +270,7 @@ func (h *AuthHandler) DeleteHost(w http.ResponseWriter, r *http.Request) {
 		err := h.resh.DeleteByAccomndation(acc.GetUid())
 		if err != nil {
 			log.Printf("RPC failed: %v\n", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusConflict)
 			_, _ = w.Write([]byte("Couldn't delete host"))
 
 			return
@@ -278,6 +280,16 @@ func (h *AuthHandler) DeleteHost(w http.ResponseWriter, r *http.Request) {
 			log.Printf("RPC failed: %v\n", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte("Availability service unavaible"))
+
+			return
+		}
+	}
+	for _, acc := range accommodations.Dummy {
+		err := h.acch.DeleteAccommodation(acc.GetUid())
+		if err != nil {
+			log.Printf("RPC failed: %v\n", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = w.Write([]byte("Couldn't delete host"))
 
 			return
 		}
@@ -340,7 +352,7 @@ func (h *AuthHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 	err = h.resh.CheckActiveReservationByEmail(email)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusConflict)
 		_, err := w.Write([]byte("Couldn't delete account"))
 		if err != nil {
 			return

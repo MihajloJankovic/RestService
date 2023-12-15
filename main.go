@@ -95,6 +95,8 @@ func main() {
 	//profile
 	router.HandleFunc("/profile/{email}", hh.GetProfile).Methods("GET")
 	router.HandleFunc("/update-profile", hh.UpdateProfile).Methods("POST")
+	router.HandleFunc("/deletehost/{email}", hhAuth.DeleteHost).Methods("GET")
+	router.HandleFunc("/deleteguest/{email}", hhAuth.DeleteAccount).Methods("GET")
 	//accommondation
 	router.HandleFunc("/accommodation/{email}", acch.GetAccommodation).Methods("GET")
 	router.HandleFunc("/accommodations", acch.GetAllAccommodation).Methods("GET")
@@ -106,6 +108,8 @@ func main() {
 	router.HandleFunc("/reservations", resh.GetAllReservation).Methods("GET")
 	router.HandleFunc("/set-reservation", resh.SetReservation).Methods("POST")
 	router.HandleFunc("/update-reservation", resh.UpdateReservation).Methods("POST")
+	router.HandleFunc("/getallresbyemail", resh.GetReservationsByEmail).Methods("POST")
+
 	//auth
 	router.HandleFunc("/register", hhAuth.Register).Methods("POST")
 	router.HandleFunc("/login", hhAuth.Login).Methods("POST")

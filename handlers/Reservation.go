@@ -102,6 +102,36 @@ func (h *ReservationHandler) GetReservation(w http.ResponseWriter, r *http.Reque
 	w.WriteHeader(http.StatusOK)
 	RenderJSON(w, response.Dummy)
 }
+func (h *ReservationHandler) GetReservationsByEmail(w http.ResponseWriter, r *http.Request) {
+	rt, err := DecodeBodyRes2(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	res := ValidateJwt(r, h.hh)
+	if res == nil {
+		err := errors.New("jwt error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	if rt.GetEmail() != res.GetEmail() {
+		err := errors.New("authorization error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	response, err := h.acc.GetAllReservationsByEmail(context.Background(), rt)
+	if err != nil || response == nil {
+		log.Printf("RPC failed: %v\n", err)
+		w.WriteHeader(http.StatusNotAcceptable)
+		_, err := w.Write([]byte("Accommodation not found"))
+		if err != nil {
+			return
+		}
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	RenderJSON(w, response.Dummy)
+}
 func (h *ReservationHandler) CheckActiveReservationByEmail(email string) error {
 	temp := new(protosRes.Emaill)
 	temp.Email = email
