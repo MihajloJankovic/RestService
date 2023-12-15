@@ -152,8 +152,31 @@ func (h *ReservationHandler) DeleteReservationByEmail(email string) error {
 	}
 	return nil
 }
+func (h *ReservationHandler) DeleteReservationById(w http.ResponseWriter, r *http.Request) {
+	res := ValidateJwt(r, h.hh)
+	if res == nil {
+		http.Error(w, "could cancle reservation", http.StatusConflict)
+		return
+	}
+	rt, err := DecodeBodyAva3(r.Body)
+	log.Println(rt.Id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	temp := new(protosRes.Emaill)
+	temp.Email = rt.Id
+	_, err = h.acc.DeleteReservationById(context.Background(), temp)
+	if err != nil {
+		http.Error(w, "could cancle reservation", http.StatusConflict)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	return
 
+}
 func (h *ReservationHandler) CheckActiveReservation(accid string) error {
+
 	temp := new(protosRes.DateFromDateTo)
 	temp.DateFrom = getTodaysDateInLocal()
 	temp.DateTo = getTodaysDateInLocal()

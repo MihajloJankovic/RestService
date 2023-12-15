@@ -109,6 +109,7 @@ func main() {
 	router.HandleFunc("/set-reservation", resh.SetReservation).Methods("POST")
 	router.HandleFunc("/update-reservation", resh.UpdateReservation).Methods("POST")
 	router.HandleFunc("/getallresbyemail", resh.GetReservationsByEmail).Methods("POST")
+	router.HandleFunc("/deletereservation", resh.DeleteReservationById).Methods("POST")
 
 	//auth
 	router.HandleFunc("/register", hhAuth.Register).Methods("POST")
