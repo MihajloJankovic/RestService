@@ -115,7 +115,8 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	jwt := GenerateJwt(w, rt.GetEmail())
+	user, err := h.hh.GetProfileInner(rt.Email)
+	jwt := GenerateJwt(w, rt.GetEmail(), user.GetRole())
 	w.WriteHeader(http.StatusOK)
 	// adds token to request header
 	RenderJSON(w, jwt)

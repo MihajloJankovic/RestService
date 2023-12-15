@@ -24,14 +24,14 @@ func StreamToByte(stream io.Reader) []byte {
 	}
 	return buf.Bytes()
 }
-func GenerateJwt(w http.ResponseWriter, email string) string {
+func GenerateJwt(w http.ResponseWriter, email string, role string) string {
 	// Create a new token object, specifying signing method and the claims
 	// you would like it to contain.
 	ttl := 600 * time.Second
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["isu"] = jwt.NewNumericDate(time.Now())
-	claims["role"] = "Guest"
+	claims["role"] = role
 	claims["email"] = email
 	claims["exp"] = time.Now().UTC().Add(ttl).Unix()
 	var sampleSecretKey = []byte("SecretYouShouldHide")
