@@ -3,17 +3,26 @@ package handlers
 import (
 	"context"
 	"errors"
+	protos "github.com/MihajloJankovic/profile-service/protos/main"
+	"github.com/gorilla/mux"
 	"log"
 	"mime"
 	"net/http"
-
-	protos "github.com/MihajloJankovic/profile-service/protos/main"
-	"github.com/gorilla/mux"
 )
 
 type Porfilehendler struct {
 	l  *log.Logger
 	cc protos.ProfileClient
+}
+type RequestRegister struct {
+	Email     string
+	Firstname string
+	Lastname  string
+	Birthday  string
+	Gender    string
+	Role      string
+	Password  string
+	Username  string
 }
 
 func NewPorfilehendler(l *log.Logger, cc protos.ProfileClient) *Porfilehendler {
@@ -21,20 +30,46 @@ func NewPorfilehendler(l *log.Logger, cc protos.ProfileClient) *Porfilehendler {
 
 }
 
-func (h *Porfilehendler) SetProfile(w http.ResponseWriter, sg string) bool {
-
-	rt, err := DecodeBodyPorfileadd(sg)
+func (h *Porfilehendler) SetProfile(w http.ResponseWriter, r *http.Request) {
+	contentType := r.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		err := errors.New("expect application/json Content-Type")
+		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
+		return
+	}
+	rt, err := DecodeBodyAuth(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusAccepted)
-		return false
+		return
 	}
-	_, err = h.cc.SetProfile(context.Background(), rt)
+	out := new(protos.ProfileSet)
+	out.Email = rt.Email
+	out.Password = rt.Password
+	out.Firstname = rt.Firstname
+	out.Lastname = rt.Lastname
+	out.Birthday = rt.Birthday
+	out.Gender = rt.Gender
+	out.Username = rt.Username
+	if rt.Role != "Guest" && rt.Role != "Host" {
+		rt.Role = "Guest"
+	}
+	out.Role = rt.Role
+	_, err = h.cc.SetProfile(context.Background(), out)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
-		return false
+		w.WriteHeader(http.StatusBadRequest)
+		RenderJSON(w, "couldn't create user,something went wrong'")
+	} else {
+		w.WriteHeader(http.StatusCreated)
+		RenderJSON(w, "registered")
 	}
-	return true
 }
+
 func (h *Porfilehendler) GetProfile(w http.ResponseWriter, r *http.Request) {
 
 	emaila := mux.Vars(r)["email"]
@@ -124,13 +159,4 @@ func (h *Porfilehendler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-}
-func (h *Porfilehendler) DeleteProfile(email string) error {
-
-	_, err := h.cc.DeleteProfile(context.Background(), &protos.ProfileRequest{Email: email})
-	if err != nil {
-		log.Printf("RPC failed: %v\n", err)
-		return err
-	}
-	return nil
 }

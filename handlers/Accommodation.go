@@ -130,7 +130,7 @@ func (h *AccommodationHandler) GetAccommodationByEmail(email string) (*protosAcc
 	return response, nil
 }
 func (h *AccommodationHandler) GetAllAccommodation(w http.ResponseWriter, r *http.Request) {
-	
+
 	emptyRequest := new(protosAcc.Emptya)
 	response, err := h.acc.GetAllAccommodation(context.Background(), emptyRequest)
 	if err != nil || response == nil {
@@ -196,17 +196,6 @@ func (h *AccommodationHandler) UpdateAccommodation(w http.ResponseWriter, r *htt
 	if err != nil {
 		return
 	}
-}
-
-func (h *AccommodationHandler) DeleteAccommodation(id string) error {
-	req := &protosAcc.DeleteRequest{Uid: id}
-
-	_, err := h.acc.DeleteAccommodation(context.Background(), req)
-	if err != nil {
-		log.Printf("RPC failed: %v\n", err)
-		return err
-	}
-	return nil
 }
 
 func (h *AccommodationHandler) FilterByPriceRange(w http.ResponseWriter, r *http.Request) {

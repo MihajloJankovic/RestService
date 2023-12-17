@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	protosAuth "github.com/MihajloJankovic/Auth-Service/protos/main"
-	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	"github.com/gorilla/mux"
 	"log"
 	"mime"
@@ -19,73 +18,10 @@ type AuthHandler struct {
 	acch *AccommodationHandler
 	avah *AvabilityHendler
 }
-type RequestRegister struct {
-	Email     string
-	Firstname string
-	Lastname  string
-	Birthday  string
-	Gender    string
-	Role      string
-	Password  string
-	Username  string
-}
 
 func NewAuthHandler(l *log.Logger, cc protosAuth.AuthClient, hb *Porfilehendler, resh *ReservationHandler, acch *AccommodationHandler, avah *AvabilityHendler) *AuthHandler {
 	return &AuthHandler{l, cc, hb, resh, acch, avah}
 
-}
-
-func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
-	contentType := r.Header.Get("Content-Type")
-	mediatype, _, err := mime.ParseMediaType(contentType)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	if mediatype != "application/json" {
-		err := errors.New("expect application/json Content-Type")
-		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
-		return
-	}
-	rt, err := DecodeBodyAuth(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusAccepted)
-		return
-	}
-	out := new(protosAuth.AuthRequest)
-	out.Email = rt.Email
-	out.Password = rt.Password
-	out2 := new(protos.ProfileResponse)
-	out2.Email = rt.Email
-	out2.Firstname = rt.Firstname
-	out2.Lastname = rt.Lastname
-	out2.Birthday = rt.Birthday
-	out2.Gender = rt.Gender
-	out2.Username = rt.Username
-	if rt.Role != "Guest" && rt.Role != "Host" {
-		rt.Role = "Guest"
-	}
-	out2.Role = rt.Role
-	payload, err := ToJSON(out2)
-
-	val := h.hh.SetProfile(w, payload)
-	if val == false {
-		w.WriteHeader(http.StatusBadRequest)
-		RenderJSON(w, "couldn't create user,something went wrong'")
-	} else {
-		_, err = h.cc.Register(context.Background(), out)
-		if err != nil {
-			log.Printf("RPC failed: %v\n", err)
-			w.WriteHeader(http.StatusBadRequest)
-			_, err := w.Write([]byte(err.Error()))
-			if err != nil {
-				return
-			}
-			return
-		}
-		w.WriteHeader(http.StatusCreated)
-		RenderJSON(w, "registered")
-	}
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
@@ -190,15 +126,6 @@ func (h *AuthHandler) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	RenderJSON(w, "Password changed successfully!")
 
 }
-func (h *AuthHandler) DeleteReservation(accid string) error {
-
-	err := h.resh.DeleteByAccomndation(accid)
-	if err != nil {
-		log.Printf("RPC failed: %v\n", err)
-		return err
-	}
-	return nil
-}
 
 func (h *AuthHandler) RequestPasswordReset(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Content-Type")
@@ -229,6 +156,7 @@ func (h *AuthHandler) RequestPasswordReset(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 	RenderJSON(w, "Password reset requested successfully")
 }
+
 func (h *AuthHandler) DeleteHost(w http.ResponseWriter, r *http.Request) {
 	email := mux.Vars(r)["email"]
 	user, err := h.hh.GetProfileInner(email)
@@ -255,54 +183,6 @@ func (h *AuthHandler) DeleteHost(w http.ResponseWriter, r *http.Request) {
 	if re.GetEmail() != email {
 		err := errors.New("authorization error")
 		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
-	accommodations, err := h.acch.GetAccommodationByEmail(email)
-	for _, acc := range accommodations.Dummy {
-		log.Println("accomondation delete check ")
-		log.Println(acc.GetUid())
-		err = h.resh.CheckActiveReservation(acc.GetUid())
-		if err != nil {
-			http.Error(w, "There is active reservation for your accomondation", http.StatusConflict)
-			return
-		}
-	}
-	for _, acc := range accommodations.Dummy {
-		err := h.resh.DeleteByAccomndation(acc.GetUid())
-		if err != nil {
-			log.Printf("RPC failed: %v\n", err)
-			w.WriteHeader(http.StatusConflict)
-			_, _ = w.Write([]byte("Couldn't delete host"))
-
-			return
-		}
-		err = h.avah.DeleteByAccomndation(acc.GetUid())
-		if err != nil {
-			log.Printf("RPC failed: %v\n", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			_, _ = w.Write([]byte("Availability service unavaible"))
-
-			return
-		}
-	}
-	for _, acc := range accommodations.Dummy {
-		err := h.acch.DeleteAccommodation(acc.GetUid())
-		if err != nil {
-			log.Printf("RPC failed: %v\n", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			_, _ = w.Write([]byte("Couldn't delete host"))
-
-			return
-		}
-	}
-	err = h.hh.DeleteProfile(email)
-	if err != nil {
-		log.Printf("RPC failed: %v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		_, err := w.Write([]byte("Couldn't delete account"))
-		if err != nil {
-			return
-		}
 		return
 	}
 	temp := new(protosAuth.AuthGet)
@@ -350,38 +230,6 @@ func (h *AuthHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.resh.CheckActiveReservationByEmail(email)
-	if err != nil {
-		log.Printf("RPC failed: %v\n", err)
-		w.WriteHeader(http.StatusConflict)
-		_, err := w.Write([]byte("Couldn't delete account"))
-		if err != nil {
-			return
-		}
-		return
-	}
-
-	err = h.resh.DeleteReservationByEmail(email)
-	if err != nil {
-		log.Printf("RPC failed: %v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		_, err := w.Write([]byte("Couldn't delete account"))
-		if err != nil {
-			return
-		}
-		return
-	}
-
-	err = h.hh.DeleteProfile(email)
-	if err != nil {
-		log.Printf("RPC failed: %v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		_, err := w.Write([]byte("Couldn't delete account"))
-		if err != nil {
-			return
-		}
-		return
-	}
 	temp := new(protosAuth.AuthGet)
 	temp.Email = email
 	_, err = h.cc.Delete(context.Background(), temp)

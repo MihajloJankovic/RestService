@@ -59,19 +59,6 @@ func (h *AvabilityHendler) SetAvability(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusOK)
 
 }
-func (h *AvabilityHendler) CheckAvaibility(accid string, dateFrom string, dateTo string) error {
-	temp := new(protos.CheckRequest)
-	temp.Id = accid
-	temp.From = dateFrom
-	temp.To = dateTo
-
-	_, err := h.cc.GetAccommodationCheck(context.Background(), temp)
-	if err != nil {
-		log.Printf("RPC failed: %v\n", err)
-		return err
-	}
-	return nil
-}
 func (h *AvabilityHendler) GetAllbyId(w http.ResponseWriter, r *http.Request) {
 
 	contentType := r.Header.Get("Content-Type")
@@ -103,17 +90,6 @@ func (h *AvabilityHendler) GetAllbyId(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	RenderJSON(w, s)
 
-}
-func (h *AvabilityHendler) DeleteByAccomndation(accid string) error {
-	req := new(protosava.DeleteRequestb)
-	req.Uid = accid
-	//this is deleted by accomndation uid
-	_, err := h.cc.DeleteByUser(context.Background(), req)
-	if err != nil {
-		log.Printf("RPC failed: %v\n", err)
-		return err
-	}
-	return nil
 }
 
 func (h *AvabilityHendler) GetallbyIDandPrice(id string, minPrice int32, maxPrice int32) ([]*protosava.CheckSet, error) {

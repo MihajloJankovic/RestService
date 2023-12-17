@@ -55,12 +55,6 @@ func (h *ReservationHandler) SetReservation(w http.ResponseWriter, r *http.Reque
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
-	err = h.ava.CheckAvaibility(rt.Accid, rt.DateFrom, rt.DateTo)
-	if err != nil {
-		log.Printf("RPC failed: %v\n", err)
-		http.Error(w, err.Error(), http.StatusConflict)
-		return
-	}
 	hash := fnv.New32a()
 	hash.Write([]byte((uuid.New()).String()))
 	rt.Id = int32(hash.Sum32())
@@ -71,6 +65,29 @@ func (h *ReservationHandler) SetReservation(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
+}
+func (h *ReservationHandler) DeleteReservationById(w http.ResponseWriter, r *http.Request) {
+	res := ValidateJwt(r, h.hh)
+	if res == nil {
+		http.Error(w, "could cancle reservation", http.StatusConflict)
+		return
+	}
+	rt, err := DecodeBodyAva3(r.Body)
+	log.Println(rt.Id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	temp := new(protosRes.Emaill)
+	temp.Email = rt.Id
+	_, err = h.acc.DeleteReservationById(context.Background(), temp)
+	if err != nil {
+		http.Error(w, "could cancle reservation", http.StatusConflict)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	return
+
 }
 func (h *ReservationHandler) GetReservation(w http.ResponseWriter, r *http.Request) {
 	ida := mux.Vars(r)["id"]
@@ -132,62 +149,6 @@ func (h *ReservationHandler) GetReservationsByEmail(w http.ResponseWriter, r *ht
 	w.WriteHeader(http.StatusOK)
 	RenderJSON(w, response.Dummy)
 }
-func (h *ReservationHandler) CheckActiveReservationByEmail(email string) error {
-	temp := new(protosRes.Emaill)
-	temp.Email = email
-	_, err := h.acc.CheckActiveReservationByEmail(context.Background(), temp)
-	if err != nil {
-		log.Println("Couldn't delete reservation because it's active")
-		return err
-	}
-	return nil
-}
-func (h *ReservationHandler) DeleteReservationByEmail(email string) error {
-	temp := new(protosRes.Emaill)
-	temp.Email = email
-	_, err := h.acc.DeleteReservationByEmail(context.Background(), temp)
-	if err != nil {
-		log.Println("Couldn't delete reservation because it's active")
-		return err
-	}
-	return nil
-}
-func (h *ReservationHandler) DeleteReservationById(w http.ResponseWriter, r *http.Request) {
-	res := ValidateJwt(r, h.hh)
-	if res == nil {
-		http.Error(w, "could cancle reservation", http.StatusConflict)
-		return
-	}
-	rt, err := DecodeBodyAva3(r.Body)
-	log.Println(rt.Id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
-	temp := new(protosRes.Emaill)
-	temp.Email = rt.Id
-	_, err = h.acc.DeleteReservationById(context.Background(), temp)
-	if err != nil {
-		http.Error(w, "could cancle reservation", http.StatusConflict)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	return
-
-}
-func (h *ReservationHandler) CheckActiveReservation(accid string) error {
-
-	temp := new(protosRes.DateFromDateTo)
-	temp.DateFrom = getTodaysDateInLocal()
-	temp.DateTo = getTodaysDateInLocal()
-	temp.Accid = accid
-	_, err := h.acc.CheckActiveReservation(context.Background(), temp)
-	if err != nil {
-		log.Println("Couldn't delete reservation because it's active")
-		return err
-	}
-	return nil
-}
 func (h *ReservationHandler) GetAllReservation(w http.ResponseWriter, r *http.Request) {
 	res := ValidateJwt(r, h.hh)
 	if res == nil {
@@ -214,16 +175,6 @@ func (h *ReservationHandler) GetAllReservation(w http.ResponseWriter, r *http.Re
 	}
 	w.WriteHeader(http.StatusOK)
 	RenderJSON(w, response.Dummy)
-}
-func (h *ReservationHandler) DeleteByAccomndation(accid string) error {
-	req := new(protosRes.DeleteRequestaa)
-	req.Uid = accid
-	_, err := h.acc.DeleteByAccomnendation(context.Background(), req)
-	if err != nil {
-		log.Printf("RPC failed: %v\n", err)
-		return err
-	}
-	return nil
 }
 func (h *ReservationHandler) UpdateReservation(w http.ResponseWriter, r *http.Request) {
 
