@@ -199,49 +199,49 @@ func (h *AccommodationHandler) UpdateAccommodation(w http.ResponseWriter, r *htt
 }
 
 func (h *AccommodationHandler) FilterByPriceRange(w http.ResponseWriter, r *http.Request) {
-	rt, err := DecodeBodyPriceAndId(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	accs, err := h.acc.GetAllAccommodation(context.Background(), &protosAcc.Emptya{})
-	if err != nil {
-		http.Error(w, "Error getting accommodations", http.StatusInternalServerError)
-		return
-	}
-
-	var availableAccommodations []*protosAcc.AccommodationResponse
-
-	for _, acc := range accs.Dummy {
-		// Dohvatanje liste dostupnosti i cena za trenutni smeštaj
-		listaAva, err := h.ava.GetallbyIDandPrice(acc.Uid, rt.MinPrice, rt.MaxPrice)
-		if err != nil {
-			http.Error(w, "Error getting availability list...", http.StatusInternalServerError)
-			return
-		}
-
-		copiedAva := make([]*protosava.CheckSet, len(listaAva))
-		copy(copiedAva, listaAva)
-
-		// Iteracija kroz kopiranu listu dostupnosti
-		for _, avab := range copiedAva {
-			// Provera dostupnosti za svaku stavku dostupnosti
-			err := h.ava.CheckAvaibility(avab.Uid, avab.From, avab.To)
-			if err != nil {
-				// Ako postoji rezervacija, ukloni iz kopirane liste dostupnosti
-				copiedAva = removeAvability(copiedAva, avab)
-			}
-		}
-
-		// Ako je kopirana lista dostupnosti neprazna, smeštaj je dostupan
-		if len(copiedAva) > 0 {
-			availableAccommodations = append(availableAccommodations, acc)
-		}
-	}
-
-	// Konvertuj rezultate u JSON i pošalji klijentu
-	RenderJSON(w, availableAccommodations)
+	//rt, err := DecodeBodyPriceAndId(r.Body)
+	//if err != nil {
+	//	http.Error(w, err.Error(), http.StatusBadRequest)
+	//	return
+	//}
+	//
+	//accs, err := h.acc.GetAllAccommodation(context.Background(), &protosAcc.Emptya{})
+	//if err != nil {
+	//	http.Error(w, "Error getting accommodations", http.StatusInternalServerError)
+	//	return
+	//}
+	//
+	//var availableAccommodations []*protosAcc.AccommodationResponse
+	//
+	//for _, acc := range accs.Dummy {
+	//	// Dohvatanje liste dostupnosti i cena za trenutni smeštaj
+	//	listaAva, err := h.ava.GetallbyIDandPrice(acc.Uid, rt.MinPrice, rt.MaxPrice)
+	//	if err != nil {
+	//		http.Error(w, "Error getting availability list...", http.StatusInternalServerError)
+	//		return
+	//	}
+	//
+	//	copiedAva := make([]*protosava.CheckSet, len(listaAva))
+	//	copy(copiedAva, listaAva)
+	//
+	//	// Iteracija kroz kopiranu listu dostupnosti
+	//	for _, avab := range copiedAva {
+	//		// Provera dostupnosti za svaku stavku dostupnosti
+	//		err := h.ava.(avab.Uid, avab.From, avab.To)
+	//		if err != nil {
+	//			// Ako postoji rezervacija, ukloni iz kopirane liste dostupnosti
+	//			copiedAva = removeAvability(copiedAva, avab)
+	//		}
+	//	}
+	//
+	//	// Ako je kopirana lista dostupnosti neprazna, smeštaj je dostupan
+	//	if len(copiedAva) > 0 {
+	//		availableAccommodations = append(availableAccommodations, acc)
+	//	}
+	//}
+	//
+	//// Konvertuj rezultate u JSON i pošalji klijentu
+	//RenderJSON(w, availableAccommodations)
 }
 
 func removeAvability(slice []*protosava.CheckSet, item *protosava.CheckSet) []*protosava.CheckSet {
