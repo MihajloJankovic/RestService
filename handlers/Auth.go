@@ -187,7 +187,7 @@ func (h *AuthHandler) DeleteHost(w http.ResponseWriter, r *http.Request) {
 	}
 	temp := new(protosAuth.AuthGet)
 	temp.Email = email
-	_, err = h.cc.Delete(context.Background(), temp)
+	_, err = h.cc.DeleteHost(context.Background(), temp)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -232,7 +232,7 @@ func (h *AuthHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 
 	temp := new(protosAuth.AuthGet)
 	temp.Email = email
-	_, err = h.cc.Delete(context.Background(), temp)
+	_, err = h.cc.DeleteGuest(context.Background(), temp)
 	if err != nil {
 		log.Printf("RPC failed: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)

@@ -37,6 +37,8 @@ EXPOSE 9091
 EXPOSE 9093
 EXPOSE 9094
 EXPOSE 9096
+EXPOSE 8080
+EXPOSE 9042
 
 # Command to run the executable
 CMD ["./main"]
