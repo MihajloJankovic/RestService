@@ -1,34 +1,13 @@
 version: '0.1'
 services:
-  server2:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: always
-    container_name: "cassandra-server-2"
-    hostname: "cassandra-server-2"
-    #Mapping ports
-    ports:
-      # <port_on_local>:<port_in_machine>
-      - 8081:8081
-    #Will be accessible through os.Getenv("PORT")
-    environment:
-      - PORT=8081
-      # NoSQL: environment variable holding connection URI for Cassandra database
-      - CASS_DB=cassandra-b:9043
-    # NoSQL: Extremely important! Cassandra takes a lot of time to start!
-    # If we don't wait for it to fully initialize we will get exceptions and will not be able to connect!
-    depends_on:
-      cassandra2:
-        condition: service_healthy
 
   # NoSQL: CassandraDB
   cassandra2:
     container_name: "cassandra-b"
-    image: cassandra
+    image: cassandra:latest
     restart: always
     ports:
-      - "9043:9042"
+      - "9042:9042"
     # Docker healtcheck - checks if database is "alive"
     healthcheck:
       test: [ "CMD-SHELL", "cqlsh -e 'describe cluster'" ]
@@ -37,35 +16,13 @@ services:
       retries: 15
     volumes:
       - cass_store_2:/var/lib/cassandra/data
-  server:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: always
-    container_name: "cassandra-server"
-    hostname: "cassandra-server"
-    #Mapping ports
-    ports:
-      # <port_on_local>:<port_in_machine>
-      - 8080:8080
-    #Will be accessible through os.Getenv("PORT")
-    environment:
-      - PORT=8080
-      # NoSQL: environment variable holding connection URI for Cassandra database
-      - CASS_DB=cassandra-a:9042
-    # NoSQL: Extremely important! Cassandra takes a lot of time to start!
-    # If we don't wait for it to fully initialize we will get exceptions and will not be able to connect!
-    depends_on:
-      cassandra:
-        condition: service_healthy
-
   # NoSQL: CassandraDB
   cassandra:
     container_name: "cassandra-a"
-    image: cassandra
+    image: cassandra:latest
     restart: always
     ports:
-      - "9042:9042"
+      - "9043:9042"
     # Docker healtcheck - checks if database is "alive"
     healthcheck:
       test: [ "CMD-SHELL", "cqlsh -e 'describe cluster'" ]
@@ -136,7 +93,6 @@ services:
       # which defines the order of starting the containers
       # Additionaly we specify that mongo service needs to pass a healthcheck
     depends_on:
-
       cassandra:
         condition: service_healthy
   reservation-service:
@@ -146,18 +102,17 @@ services:
     ports:
       - "9096:9096"
     environment:
-      - PORT=8080
+      - PORT=8081
       # NoSQL: environment variable holding connection URI for Mongo database
       # protocol://username:password@hostname:port
 
-      - CASS_DB=cassandra-b:9043
+      - CASS_DB=cassandra-b:9042
       # - MONGO_DB_URI=mongodb://mongo:27018
       # NoSQL: Our service will try to connect to Mongo before it is up
       # in order to avoid that problem, we specify that it depends on mongo service
       # which defines the order of starting the containers
       # Additionaly we specify that mongo service needs to pass a healthcheck
     depends_on:
-
       cassandra2:
         condition: service_healthy
   auth-service:
