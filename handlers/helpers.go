@@ -63,6 +63,16 @@ func DecodeBodyAva(r io.Reader) (*protosava.CheckSet, error) {
 	}
 	return &rt, nil
 }
+func DecodeBodyAva4(r io.Reader) (*protosRes.ReservationRequest, error) {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+
+	var rt protosRes.ReservationRequest
+	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
+		return nil, err
+	}
+	return &rt, nil
+}
 func DecodeBodyAva3(r io.Reader) (*protosava.GetAllRequest, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()

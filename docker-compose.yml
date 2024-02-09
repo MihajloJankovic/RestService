@@ -69,7 +69,7 @@ services:
       - "9093:9093"
     environment:
       - PORT=8080
-      - MONGO_DB_URI=mongodb://root:pass@mongo-accommodation:27018
+      - MONGO_DB_URI=mongodb://root:pass@mongo-accommodation:27017
       # NoSQL: Our service will try to connect to Mongo before it is up
       # in order to avoid that problem, we specify that it depends on mongo service
       # which defines the order of starting the containers
